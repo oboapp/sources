@@ -1,0 +1,12 @@
+{
+  "origin": "oboapp/oboapp 84c89de: extractFeedItems + buildWebPageSourceDocument",
+  "xml": "<?xml version=\"1.0\"?><rss><channel><item>\n<title>Test Post &amp; Новини</title>\n<link>https://triaditza.org/Test%2fPost/?x=1&amp;y=2</link>\n<pubDate>Tue, 09 Jun 2026 11:13:10 +0000</pubDate>\n<content:encoded><![CDATA[<h2>Заглавие</h2><p>Test <strong>content</strong>.</p><p>Материалът е публикуван за пръв път на Район Триадица.</p>]]></content:encoded>\n</item></channel></rss>",
+  "expected": [
+    {
+      "identifier": "https://triaditza.org/Test%2fPost/?x=1&y=2",
+      "title": "Test Post & Новини",
+      "datePublished": "2026-06-09T11:13:10.000Z",
+      "message": "## Заглавие\n\nTest **content**."
+    }
+  ]
+}
