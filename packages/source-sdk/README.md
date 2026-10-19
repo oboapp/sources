@@ -20,6 +20,6 @@ On rejection, fail registration and retain the previous cursor. Never silently t
 
 ## Compatibility and release
 
-Both ESM and CommonJS imports are supported with matching type declarations. The metadata subpath has no runtime dependencies. This initial 0.1 contract is a foundation; it does not implement durable orchestration or migrate a source.
+Both ESM and CommonJS imports are supported with matching type declarations, including the older `node` module resolution used by Obo's production compiler. The metadata subpath has no runtime dependencies. This initial 0.1 contract is a foundation; it does not implement durable orchestration or migrate a source.
 
 Each package owns its version and release notes. Breaking contract changes require explicit consumer migration; never use package updates to change persisted identity. Build and test with `pnpm check` at the repository root. Run `pnpm --dir packages/source-sdk pack` to build a publishable tarball including the inherited LICENSE. Inspect the tarball before manual npm publication. Consumers must pin released package versions in their lockfile; Obo integration starts after publication, not via a private Git checkout dependency.
