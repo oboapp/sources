@@ -1,0 +1,27 @@
+{
+  "name": "@oboapp/source-sdk",
+  "version": "0.1.0",
+  "description": "Database-free contracts for Obo data source packages",
+  "license": "Unlicense",
+  "type": "module",
+  "repository": { "type": "git", "url": "git+https://github.com/oboapp/sources.git", "directory": "packages/source-sdk" },
+  "files": ["dist", "LICENSE", "README.md"],
+  "exports": {
+    ".": {
+      "import": { "types": "./dist/esm/index.d.ts", "default": "./dist/esm/index.js" },
+      "require": { "types": "./dist/cjs/index.d.ts", "default": "./dist/cjs/index.js" }
+    },
+    "./metadata": {
+      "import": { "types": "./dist/esm/metadata.d.ts", "default": "./dist/esm/metadata.js" },
+      "require": { "types": "./dist/cjs/metadata.d.ts", "default": "./dist/cjs/metadata.js" }
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node scripts/finalize-build.mjs",
+    "test": "tsc -p test/tsconfig.json && node --test test/*.test.mjs",
+    "prepack": "pnpm build"
+  },
+  "engines": { "node": ">=20" },
+  "publishConfig": { "access": "public" }
+}
