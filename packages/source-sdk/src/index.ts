@@ -8,13 +8,13 @@ export interface DiscoveredItem {
   readonly identifier: string;
   /** Informational only: existing identifiers are never refetched based on this value. */
   readonly observedAt?: string;
-  /** JSON context needed to fetch an item independently after a restart. */
+  /** JSON context passed from the listing to fetchItem within a scan. */
   readonly payload?: JsonValue;
 }
 
 export interface DiscoveryPage {
   readonly items: readonly DiscoveredItem[];
-  /** Opaque resume cursor. Obo persists it only after registering every item. */
+  /** Opaque pagination cursor used within the current scan. */
   readonly nextCursor?: string;
 }
 
@@ -47,5 +47,5 @@ export interface SourceContext {
   readonly signal?: AbortSignal;
 }
 
-/** Create once per worker batch to reuse sessions; retries may use a fresh instance. */
+/** Create once per scheduled scan to reuse sessions. */
 export type CreateSource = (context: SourceContext) => DataSource | Promise<DataSource>;
