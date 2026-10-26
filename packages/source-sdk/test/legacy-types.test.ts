@@ -12,7 +12,9 @@ test("resolves root and metadata declarations with Obo's production compiler set
   const temporaryRoot = resolve(tmpdir());
   const fixture = await mkdtemp(join(temporaryRoot, "obo-sdk-types-"));
   // Only clean up the unique fixture allocated directly under the system temp directory.
-  if (dirname(resolve(fixture)) !== temporaryRoot) throw new Error("Unsafe fixture cleanup path");
+  if (dirname(resolve(fixture)) !== temporaryRoot) {
+    throw new Error("Unsafe fixture cleanup path");
+  }
   try {
     const packageRoot = fileURLToPath(new URL("..", import.meta.url));
     const scope = join(fixture, "node_modules", "@oboapp");
