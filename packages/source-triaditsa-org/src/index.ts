@@ -3,18 +3,29 @@ import TurndownService from "turndown";
 import { extractFeedItems } from "./extractors.js";
 import { fetchFeedXml } from "./rss.js";
 
-const FEED_URL = "https://triaditza.org/category/%D0%BD%D0%BE%D0%B2%D0%B8%D0%BD%D0%B8-%D0%B8-%D1%81%D1%8A%D0%B1%D0%B8%D1%82%D0%B8%D1%8F/feed/";
+const NEWS_FEED_URL = "https://triaditza.org/category/%D0%BD%D0%BE%D0%B2%D0%B8%D0%BD%D0%B8-%D0%B8-%D1%81%D1%8A%D0%B1%D0%B8%D1%82%D0%B8%D1%8F/feed/";
+
+const FEED_URLS = [
+  NEWS_FEED_URL,
+  "https://triaditza.org/feed/?post_type=announcements",
+];
 
 /** Full content comes from the feed; fetchItem performs no additional HTTP request. */
 export const createSource: CreateSource = () => {
   const markdown = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced" });
+  markdown.remove(["style", "script"]);
   return {
     async discoverItems() {
-      const items = extractFeedItems(await fetchFeedXml(FEED_URL));
+      const items = [];
+      for (const feedUrl of FEED_URLS) {
+        items.push(...extractFeedItems(await fetchFeedXml(feedUrl)));
+      }
       const seen = new Set<string>();
       return {
         items: items.filter((item) => {
-          if (seen.has(item.url)) return false;
+          if (seen.has(item.url)) {
+            return false;
+          }
           seen.add(item.url);
           return true;
         }).map((item) => ({
