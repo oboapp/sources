@@ -1,3 +1,4 @@
+import type { JsonValue, SourceContent } from "@oboapp/source-sdk";
 import { test, afterEach, mock } from "node:test";
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
@@ -20,7 +21,7 @@ const xml = `<?xml version="1.0"?><rss><channel><item>
 const expectedIdentifier = "https://triaditza.org/Test%2fPost/?x=1&y=2";
 
 test("preserves the historical RSS identifier and Markdown output without a detail request", async () => {
-  const fetch = mock.fn(async () => new globalThis.Response(xml));
+  const fetch = mock.fn<typeof globalThis.fetch>(async () => new globalThis.Response(xml));
   globalThis.fetch = fetch;
   const source = await createSource({ locality: "bg.sofia" });
   const page = await source.discoverItems();
@@ -33,12 +34,13 @@ test("preserves the historical RSS identifier and Markdown output without a deta
   });
   assert.equal(fetch.mock.callCount(), 2);
   assert.equal(fetch.mock.calls[1].arguments[0], "https://triaditza.org/feed/?post_type=announcements");
-  assert.equal(fetch.mock.calls[0].arguments[1].headers.Accept, "application/rss+xml, application/xml, text/xml, */*");
-  assert.ok(fetch.mock.calls[0].arguments[0].startsWith("https://triaditza.org/category/"));
+  assert.equal(new Headers(fetch.mock.calls[0].arguments[1]?.headers).get("Accept"), "application/rss+xml, application/xml, text/xml, */*");
+  assert.ok(String(fetch.mock.calls[0].arguments[0]).startsWith("https://triaditza.org/category/"));
 });
 
 test("matches content captured from the legacy parser and document builder", async () => {
-  const fixture = JSON.parse(await readFile(new globalThis.URL("./legacy-output.json", import.meta.url), "utf8"));
+  const fixture: { xml: string; expected: (SourceContent & { identifier: string })[] } =
+    JSON.parse(await readFile(new globalThis.URL("./legacy-output.json", import.meta.url), "utf8"));
   globalThis.fetch = async () => new globalThis.Response(fixture.xml);
   const source = await createSource({ locality: "bg.sofia" });
   const page = await source.discoverItems();
@@ -55,7 +57,9 @@ test("filters foreign hosts, invalid dates and malformed URLs as the legacy pars
 });
 
 test("deduplicates repeated feed entries before returning candidates", async () => {
-  const entry = /<item>[\s\S]*?<\/item>/.exec(xml)[0];
+  const match = /<item>[\s\S]*?<\/item>/.exec(xml);
+  assert.ok(match);
+  const entry = match[0];
   globalThis.fetch = async () => new globalThis.Response(xml.replace("</channel>", `${entry}</channel>`));
   const source = await createSource({ locality: "bg.sofia" });
   assert.equal((await source.discoverItems()).items.length, 1);
@@ -63,7 +67,14 @@ test("deduplicates repeated feed entries before returning candidates", async () 
 
 test("rejects missing content rather than constructing a partial message", async () => {
   const source = await createSource({ locality: "bg.sofia" });
-  for (const payload of [undefined, null, [], {}, { title: "T", date: "2026-01-01", contentHtml: "" }]) {
+  const payloads: (JsonValue | undefined)[] = [
+    undefined,
+    null,
+    [],
+    {},
+    { title: "T", date: "2026-01-01", contentHtml: "" },
+  ];
+  for (const payload of payloads) {
     await assert.rejects(source.fetchItem({ identifier: expectedIdentifier, payload }), /Missing feed content/);
   }
 });
@@ -88,7 +99,7 @@ test("supports CommonJS and preserves catalog metadata", async () => {
 test("combines News and announcements while preserving document links and publication dates", async () => {
   const announcements = await readFile(new globalThis.URL("./announcements.xml", import.meta.url), "utf8");
   globalThis.fetch = async (url) => {
-    return new globalThis.Response(url.includes("post_type=announcements") ? announcements : xml);
+    return new globalThis.Response(String(url).includes("post_type=announcements") ? announcements : xml);
   };
   const source = await createSource({ locality: "bg.sofia" });
   const page = await source.discoverItems();
@@ -104,7 +115,7 @@ test("combines News and announcements while preserving document links and public
 
 test("keeps the first occurrence when the feeds share a URL", async () => {
   globalThis.fetch = async (url) => {
-    return new globalThis.Response(url.includes("post_type=announcements") ? xml.replace("Test <strong>content</strong>.", "Duplicate") : xml);
+    return new globalThis.Response(String(url).includes("post_type=announcements") ? xml.replace("Test <strong>content</strong>.", "Duplicate") : xml);
   };
   const source = await createSource({ locality: "bg.sofia" });
   const page = await source.discoverItems();
@@ -114,7 +125,7 @@ test("keeps the first occurrence when the feeds share a URL", async () => {
 
 test("reports an announcements failure and retries both feeds on the next scan", async () => {
   globalThis.fetch = async (url) => {
-    return url.includes("post_type=announcements")
+    return String(url).includes("post_type=announcements")
       ? new globalThis.Response("unavailable", { status: 503 })
       : new globalThis.Response(xml);
   };

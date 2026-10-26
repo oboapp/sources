@@ -48,7 +48,7 @@
   "sideEffects": false,
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node scripts/finalize-build.mjs",
-    "test": "node --test test/*.test.mjs",
+    "test": "tsc -p test/tsconfig.json && tsx --test test/*.test.ts",
     "prepack": "pnpm build"
   },
   "engines": {

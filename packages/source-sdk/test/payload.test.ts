@@ -24,12 +24,27 @@ test("rejects silent JSON data loss and non-JSON objects", () => {
 
 test("does not invoke getters or toJSON hooks", () => {
   let invoked = false;
-  const getter = { get value() { invoked = true; return "x"; } };
-  const hook = { toJSON() { invoked = true; return "x"; } };
+  const getter = {
+    get value() {
+      invoked = true;
+      return "x";
+    },
+  };
+  const hook = {
+    toJSON() {
+      invoked = true;
+      return "x";
+    },
+  };
   assert.throws(() => serializeDiscoveryPayload(getter), TypeError);
   assert.throws(() => serializeDiscoveryPayload(hook), TypeError);
   assert.equal(invoked, false);
-  class CustomArray extends Array { toJSON() { invoked = true; return "lost"; } }
+  class CustomArray extends Array<number> {
+    toJSON() {
+      invoked = true;
+      return "lost";
+    }
+  }
   assert.throws(() => serializeDiscoveryPayload(new CustomArray(1, 2)), TypeError);
   assert.equal(invoked, false);
 });
@@ -39,14 +54,19 @@ test("rejects hidden/symbol data and array properties that JSON would drop", () 
   const symbol = { [Symbol("secret")]: 1 };
   const extra = Object.assign([1], { extra: 2 });
   const sparseWithExtra = Object.assign(new Array(1), { extra: 2 });
-  for (const value of [hidden, symbol, extra, sparseWithExtra]) assert.throws(() => serializeDiscoveryPayload(value), TypeError);
+  for (const value of [hidden, symbol, extra, sparseWithExtra]) {
+    assert.throws(() => serializeDiscoveryPayload(value), TypeError);
+  }
 });
 
 test("rejects cycles and excessive nesting but allows shared subtrees", () => {
-  const cycle = {}; cycle.self = cycle;
+  const cycle: Record<string, unknown> = {};
+  cycle.self = cycle;
   assert.throws(() => serializeDiscoveryPayload(cycle), TypeError);
-  let deep = null;
-  for (let i = 0; i < 66; i++) deep = [deep];
+  let deep: unknown = null;
+  for (let i = 0; i < 66; i++) {
+    deep = [deep];
+  }
   assert.throws(() => serializeDiscoveryPayload(deep), RangeError);
   const shared = { x: "same" };
   assert.deepEqual(JSON.parse(serializeDiscoveryPayload([shared, shared])), [shared, shared]);
