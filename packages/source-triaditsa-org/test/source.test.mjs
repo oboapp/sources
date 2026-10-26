@@ -29,6 +29,7 @@ test("preserves the historical RSS identifier and Markdown output without a deta
     message: "## Заглавие\n\nTest **content**.",
   });
   assert.equal(fetch.mock.callCount(), 1);
+  assert.equal(fetch.mock.calls[0].arguments[1].headers.Accept, "application/rss+xml, application/xml, text/xml, */*");
   assert.ok(fetch.mock.calls[0].arguments[0].startsWith("https://triaditza.org/category/"));
 });
 
