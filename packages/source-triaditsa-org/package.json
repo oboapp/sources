@@ -1,6 +1,6 @@
 {
   "name": "@oboapp/source-triaditsa-org",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Full-content RSS source for Sofia district Triaditsa",
   "license": "Unlicense",
   "type": "module",
