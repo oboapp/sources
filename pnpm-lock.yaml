@@ -51,6 +51,28 @@ importers:
 
   packages/source-sdk: {}
 
+  packages/source-so-slatina-org:
+    dependencies:
+      '@oboapp/source-sdk':
+        specifier: 0.1.1
+        version: 0.1.1
+      html-entities:
+        specifier: 2.6.0
+        version: 2.6.0
+      playwright:
+        specifier: 1.61.1
+        version: 1.61.1
+      turndown:
+        specifier: 7.2.2
+        version: 7.2.2
+    devDependencies:
+      '@types/turndown':
+        specifier: 5.0.6
+        version: 5.0.6
+      happy-dom:
+        specifier: 20.0.11
+        version: 20.0.11
+
   packages/source-triaditsa-org:
     dependencies:
       '@oboapp/source-sdk':
