@@ -23,3 +23,4 @@ jobs:
       - run: pnpm check
       - run: pnpm --dir packages/source-sdk pack
       - run: pnpm --dir packages/source-triaditsa-org pack
+      - run: pnpm --dir packages/source-rayon-oborishte-bg pack
