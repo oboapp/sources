@@ -13,6 +13,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | Package | Purpose |
 | --- | --- |
 | [`@oboapp/source-sdk`](packages/source-sdk) | Source contracts, isolated catalog metadata types, and discovery payload validation |
+| [`@oboapp/source-facebook`](packages/source-facebook) | Configurable, admin-authorized Facebook Page source with independent instances |
 | [`@oboapp/source-triaditsa-org`](packages/source-triaditsa-org) | Full-content RSS source for Sofia district Triaditsa |
 | [`@oboapp/source-rayon-oborishte-bg`](packages/source-rayon-oborishte-bg) | RSS and webpage source for Sofia district Oborishte |
 | [`@oboapp/source-so-slatina-org`](packages/source-so-slatina-org) | RSS and webpage source for Sofia district Slatina |
