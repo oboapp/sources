@@ -1,0 +1,15 @@
+{
+  "title": "Ремонт",
+  "message": "Ремонт\n\n4 октомври 2026 г. в 08:00\nул. Тест",
+  "markdownText": "Ремонт\n\n4 октомври 2026 г. в 08:00\nул. Тест",
+  "datePublished": "2026-10-04T08:00:00.000Z",
+  "timespanStart": "2026-10-04T08:00:00.000Z",
+  "timespanEnd": "2026-10-04T08:00:00.000Z",
+  "deepLinkUrl": "",
+  "geoJson": {
+    "type": "FeatureCollection",
+    "features": [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [23.32, 42.7]}, "properties": {}}]
+  },
+  "categories": ["heating"],
+  "isRelevant": true
+}
