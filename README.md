@@ -2,7 +2,11 @@
 
 Independently versioned data source packages for [Obo](https://github.com/oboapp/oboapp).
 
-This repository is being established as part of [oboapp/oboapp#586](https://github.com/oboapp/oboapp/issues/586). Sources supply discovered identifiers and content; Obo owns scheduling, deduplication, persistence, ingestion, and notifications.
+The source migration is tracked in [oboapp/oboapp#586](https://github.com/oboapp/oboapp/issues/586). Sources supply discovered identifiers and content; Obo owns scheduling, deduplication, persistence, ingestion, and notifications.
+
+## Contributing and publishing
+
+Agents start with [AGENTS.md](AGENTS.md). For version changes, package publication, release tags, GitHub releases, or publishing problems, follow [RELEASING.md](RELEASING.md), the canonical release procedure for every package.
 
 ## Packages
 
@@ -18,7 +22,7 @@ Use Node.js 20.3 or later and the pinned pnpm version. Run `pnpm install --froze
 
 Tests are written in TypeScript, type-checked with `tsc`, and run with Node's test runner through `tsx`. Use JavaScript for configuration and build helpers when TypeScript would add unnecessary setup.
 
-Packages own independent SemVer versions. The SDK release `0.1.1` is published on npm; subsequent publication remains manual. See [RELEASING.md](RELEASING.md). Existing Obo crawlers remain active until each package migration lands separately.
+Packages own independent SemVer versions and are published manually after review. Package manifests, npm versions, and package-specific Git tags identify releases. Existing Obo crawlers remain active until each package migration lands separately.
 
 ## License
 
