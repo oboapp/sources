@@ -25,6 +25,7 @@ const studentski = facebook.configure({
   id: "studentski-facebook",
   name: 'Столична община, Район "Студентски" (Facebook)',
   pageId: "<confirmed-studentski-page-id>",
+  url: "https://www.facebook.com/studentski.district",
   localities: ["bg.sofia"],
   apiVersion: "v25.0",
   getAccessToken: () => process.env.FACEBOOK_STUDENTSKI_PAGE_TOKEN,
@@ -84,6 +85,8 @@ Fixture tests cover the reusable adapter contract. Admin authorization, live acc
 For [Obo's Oborishte pilot](https://github.com/oboapp/oboapp/issues/662), keep Facebook and website records in an isolated pilot environment. Verify every configured database backend and make production notification delivery unavailable before running real ingestion. This package can be reviewed and released before the admins join the pilot.
 
 Public post text, public links, and publication dates supplied by maintainers can improve representative fixtures. Use synthetic credentials and remove personal information, raw paging URLs, and signed media URLs from fixtures.
+
+The [district fixtures](https://github.com/oboapp/sources/blob/main/packages/source-facebook/test/fixtures/README.md) cover six supplied public notices from Oborishte and Studentski. Their provenance records missing timestamps, media details, and post links. Source tests preserve the supplied messages and leave relevance decisions and conflicting event dates to downstream review.
 
 ## Checks and Release
 
