@@ -2,19 +2,25 @@
 
 This is the canonical release procedure for every package in this repository, including the SDK. Each package owns its version, changelog, npm tarball, Git tag, and GitHub release. Release only the packages changed by the reviewed PR.
 
+The agent prepares the PRs, runs independent subagent reviews, addresses findings,
+and checks the results. The user then performs the final review and merges. After
+merge, the agent provides the exact commands below for the selected packages and
+merged commit. The user handles npm login and executes the publishing commands.
+Follow this sequence for later source migration items.
+
 ## 1. Prepare the release PR
 
 Update the affected package's version and changelog in a reviewed PR. Use SemVer: patch for compatible fixes, minor for compatible additions, and an explicit breaking version for contract changes (a minor increment during 0.x). Use `pnpm add` or `pnpm remove` for dependency changes.
 
 Run `pnpm install --frozen-lockfile`, `pnpm check`, and the package's `pnpm pack` command. Inspect available CI and Sonar findings and the actual quality gate before merge. Sonar coverage in this repository is tracked in [oboapp/oboapp#663](https://github.com/oboapp/oboapp/issues/663); report unavailable results explicitly while that setup is pending.
 
-Merge the PR after the applicable checks pass. Publication is a separate action under the user's release authorization. Reuse authorization already given in the session. Confirm npm account/scope access before the first release of a package. Keep credentials outside this repository.
+The user reviews and merges the PR after the applicable checks pass. Prepare the publishing instructions after merge, using the exact merged main commit and its successful CI run. Confirm npm account/scope access before the first release of a package. Keep credentials outside this repository.
 
 Persisted source IDs and identifiers remain compatibility boundaries across package versions. Updating a package does not authorize refetching existing identifiers or changing historical records.
 
 ## 2. Check out the exact merged commit
 
-The examples below use PowerShell 7.3 or later from the repository root. The preference settings stop a command block when a native command fails. Run commands in order and stop immediately on any failure. Resolve existing working-tree changes before switching commits.
+The commands below are for the user to run after merge. They use PowerShell 7.3 or later from the repository root. The preference settings stop a command block when a native command fails. Run commands in order and stop immediately on any failure. Resolve existing working-tree changes before switching commits.
 
 ```powershell
 $ErrorActionPreference = 'Stop'
@@ -77,7 +83,7 @@ Publish the exact archive inspected above to the public npm registry. The explic
 npm publish $tarballPath --access public --registry=https://registry.npmjs.org
 ```
 
-Complete any browser, two-factor authentication, or staged-approval prompts from npm. Confirm publication succeeded before proceeding. Publish one selected package at a time. Keep publication manual until a separately reviewed automation preserves the same package selection and verification steps.
+Complete any browser, two-factor authentication, or staged-approval prompts from npm. Confirm publication succeeded before proceeding. The user publishes one selected package at a time. Keep this publication step manual.
 
 ## 4. Verify npm before tagging
 
