@@ -13,6 +13,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | Package | Purpose |
 | --- | --- |
 | [`@oboapp/source-sdk`](packages/source-sdk) | Source contracts, isolated catalog metadata types, and discovery payload validation |
+| [`@oboapp/source-web-utils`](packages/source-web-utils) | Shared RSS parsing and browser detail collection |
 | [`@oboapp/source-triaditsa-org`](packages/source-triaditsa-org) | Full-content RSS source for Sofia district Triaditsa |
 | [`@oboapp/source-rayon-oborishte-bg`](packages/source-rayon-oborishte-bg) | RSS and webpage source for Sofia district Oborishte |
 | [`@oboapp/source-so-slatina-org`](packages/source-so-slatina-org) | RSS and webpage source for Sofia district Slatina |
@@ -23,6 +24,12 @@ Use Node.js 20.3 or later and the pinned pnpm version. Run `pnpm install --froze
 Tests are written in TypeScript, type-checked with `tsc`, and run with Node's test runner through `tsx`. Use JavaScript for configuration and build helpers when TypeScript would add unnecessary setup.
 
 Packages own independent SemVer versions and are published manually after review. Package manifests, npm versions, and package-specific Git tags identify releases. Existing Obo crawlers remain active until each package migration lands separately.
+
+New website packages reuse `source-web-utils`; existing website packages retain
+their current released helpers until their own reviewed updates. Workspace helper
+dependencies become exact release versions in packed source packages. Publish the
+reviewed helper version before the source packages that require it, following
+[RELEASING.md](RELEASING.md).
 
 ## License
 
