@@ -21,8 +21,4 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
-      - run: pnpm --dir packages/source-sdk pack
-      - run: pnpm --dir packages/source-triaditsa-org pack
-      - run: pnpm --dir packages/source-rayon-oborishte-bg pack
-      - run: pnpm --dir packages/source-so-slatina-org pack
-      - run: pnpm --dir packages/source-toplo-bg pack
+      - run: pnpm -r --workspace-concurrency=1 pack
