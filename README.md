@@ -18,6 +18,8 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | [`@oboapp/source-rayon-oborishte-bg`](packages/source-rayon-oborishte-bg) | RSS and webpage source for Sofia district Oborishte |
 | [`@oboapp/source-so-slatina-org`](packages/source-so-slatina-org) | RSS and webpage source for Sofia district Slatina |
 | [`@oboapp/source-toplo-bg`](packages/source-toplo-bg) | Listing-only heating incidents with synthetic identifiers from Toplofikatsia Sofia |
+| [`@oboapp/source-lozenets-sofia-bg`](packages/source-lozenets-sofia-bg) | RSS and webpage source for Sofia district Lozenets |
+| [`@oboapp/source-studentski-bg`](packages/source-studentski-bg) | RSS and webpage source for Sofia district Studentski |
 
 Use Node.js 20.3 or later and the pinned pnpm version. Run `pnpm install --frozen-lockfile` and `pnpm check`. CI checks Node.js 20, 22, and 24 and packs each package.
 
