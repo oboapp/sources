@@ -25,7 +25,7 @@ Discovery reads [the category feed](https://lozenets.sofia.bg/category/%d0%bd%d0
 
 Detail fetches reuse one browser, open and close a page per item, block image/media/font downloads, and wait two seconds after successful extraction. The page title is preferred, with the RSS title as fallback. The RSS date is always retained. Cleaned article HTML becomes Markdown with document links preserved. Missing article content fails instead of using the feed excerpt.
 
-The runtime uses `@oboapp/source-web-utils` with Playwright 1.61.1 and requires its matching Chromium revision and system libraries. Keep that revision aligned with the deployment image. Provider or browser failures propagate to Obo; its runner records failures and retries missing items on a later scan. Closing the source releases its browser.
+The runtime requires Node.js 20.3 or later. It uses `@oboapp/source-web-utils` with Playwright 1.61.1 and its matching Chromium revision and system libraries. Keep that revision aligned with the deployment image. Provider or browser failures propagate to Obo; its runner records failures and retries missing items on a later scan. Closing the source releases its browser.
 
 ## Coverage and limits
 
