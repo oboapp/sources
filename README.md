@@ -23,6 +23,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | [`@oboapp/source-sredec-sofia-org`](packages/source-sredec-sofia-org) | Five paginated category feeds and webpage content for Sofia district Sredets |
 | [`@oboapp/source-rayon-ilinden-bg`](packages/source-rayon-ilinden-bg) | Browser listing and webpage content for Sofia district Ilinden |
 | [`@oboapp/source-nadezhda-org`](packages/source-nadezhda-org) | Browser listing and webpage content for Sofia district Nadezhda |
+| [`@oboapp/source-raioniskar-bg`](packages/source-raioniskar-bg) | Browser listing and webpage content for Sofia district Iskar |
 
 Use Node.js 20.3 or later and the pinned pnpm version. Run `pnpm install --frozen-lockfile` and `pnpm check`. CI checks Node.js 20, 22, and 24 and packs each package.
 
