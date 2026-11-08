@@ -24,6 +24,27 @@ RSS helpers retain the legacy URL, entity and date parsing rules, the RSS Accept
 header, and a 30-second timeout. `RssFeedHttpError` exposes the HTTP status and URL
 so a provider can distinguish a missing pagination page from an outage.
 
+## Browser listings
+
+Import `createBrowserSource` from `@oboapp/source-web-utils/browser` for sources
+whose listing pages require browser extraction. Supply `indexUrl`, `selectors`
+with `INDEX` and `POST` groups, `unwantedElements`, and an optional `urlFilter`.
+Each listing container contributes its first matching anchor when both its URL
+and listing title are present. Anchor spelling and order are retained. Duplicate
+URLs remain unless the provider chooses `dedupe: "first"` or `dedupe: "last"`.
+Both modes retain each URL's first position.
+
+Discovery returns identifiers only. Fetching requires the detail page's title
+and content and uses its publication date. Dates retain the legacy dot or slash
+day-month-year conversion, including two-digit years and current-time fallback
+for missing or unparseable dates. Content cleanup runs on a cloned element and
+uses the same Markdown conventions as hybrid sources.
+
+One browser serves the listing and all details until `close` is called. Each
+page closes after success or failure, and every attempt waits two seconds,
+including the listing and failed requests. `BrowserDependencies` allows tests
+to supply browser launch and delay functions. Call `close` in `finally`.
+
 ## Runtime and checks
 
 Requires Node 20.3 or later and the Chromium revision for pinned Playwright 1.61.1.

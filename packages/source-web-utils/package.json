@@ -1,6 +1,6 @@
 {
   "name": "@oboapp/source-web-utils",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "RSS and browser collection helpers for Obo data source packages",
   "main": "./dist/cjs/index.js",
   "scripts": {
@@ -40,6 +40,16 @@
         "default": "./dist/cjs/index.js"
       }
     },
+    "./browser": {
+      "import": {
+        "types": "./dist/esm/browser.d.ts",
+        "default": "./dist/esm/browser.js"
+      },
+      "require": {
+        "types": "./dist/cjs/browser.d.ts",
+        "default": "./dist/cjs/browser.js"
+      }
+    },
     "./rss": {
       "import": {
         "types": "./dist/esm/rss.d.ts",
@@ -53,6 +63,9 @@
   },
   "typesVersions": {
     "*": {
+      "browser": [
+        "dist/cjs/browser.d.ts"
+      ],
       "rss": [
         "dist/cjs/rss.d.ts"
       ]
