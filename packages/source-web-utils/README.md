@@ -40,10 +40,28 @@ day-month-year conversion, including two-digit years and current-time fallback
 for missing or unparseable dates. Content cleanup runs on a cloned element and
 uses the same Markdown conventions as hybrid sources.
 
+Sources with different provider formats can supply `extractListing(page)`,
+`extractDetails(page)` and `parsePublicationDate(dateText)`. These optional hooks
+replace their respective default conversions. Listing hooks return
+`BrowserPostLink[]` with `url`, `title` and `date`; detail hooks return
+`BrowserPostDetails` with `title`, `dateText` and `contentHtml`. Listing hooks
+retain responsibility for provider-specific selection and cleanup rules. The
+helper applies its configured URL filter and deduplication to their results.
+Detail hooks retain responsibility for HTML cleanup; the helper still requires
+the returned title and content and converts the HTML to Markdown. A custom date
+parser receives the returned detail date text exactly as supplied.
+
+The `browser` entrypoint also exports `parseBulgarianDate` for the default numeric
+date conversion and `parseBulgarianMonthDate` for dates such as `9 юни 2026`.
+The month-name parser preserves local midnight, validates the resulting calendar
+date and falls back to the current time when the input is invalid. Its result
+depends on the process timezone, matching the existing source behavior.
+
 One browser serves the listing and all details until `close` is called. Each
 page closes after success or failure, and every attempt waits two seconds,
 including the listing and failed requests. `BrowserDependencies` allows tests
 to supply browser launch and delay functions. Call `close` in `finally`.
+Hook failures follow the same page cleanup and request pacing as other failures.
 
 ## Runtime and checks
 

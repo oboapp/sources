@@ -1,9 +1,15 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { afterEach, mock, test } from "node:test";
 import { chromium, type Browser, type Page, type Route } from "playwright";
 import { Window } from "happy-dom";
-import { createBrowserSource, type BrowserSourceOptions } from "../dist/esm/browser.js";
+import {
+  createBrowserSource,
+  parseBulgarianDate,
+  parseBulgarianMonthDate,
+  type BrowserSourceOptions,
+} from "../dist/esm/browser.js";
 
 const originalGlobals = {
   document: globalThis.document,
@@ -122,6 +128,142 @@ test("empty listing returns no candidates and still closes and paces the index r
   assert.equal(fixture.closeBrowser.mock.callCount(), 1);
 });
 
+test("custom listing extraction retains literal identifiers, filtering and deduplication", async () => {
+  const fixture = browserFixture();
+  const extractListing = mock.fn(async (page: Page) => {
+    assert.equal(page, fixture.page);
+    return [
+      { url: identifier, title: "First title", date: "Provider date" },
+      { url: "https://example.com/excluded", title: "Excluded", date: "" },
+      { url: identifier, title: "Later title", date: "Later date" },
+    ];
+  });
+  const source = createBrowserSource({
+    ...options,
+    extractListing,
+    urlFilter(url) {
+      return !url.endsWith("excluded");
+    },
+    dedupe: "last",
+  }, fixture);
+  try {
+    assert.deepEqual(await source.discoverItems(), { items: [{ identifier }] });
+    assert.equal(extractListing.mock.callCount(), 1);
+    assert.equal(fixture.evaluate.mock.callCount(), 0);
+    assert.equal(fixture.closePage.mock.callCount(), 1);
+    assert.equal(fixture.delay.mock.callCount(), 1);
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("custom details and date parsing preserve provider values and helper Markdown conversion", async () => {
+  const fixture = browserFixture();
+  const dateText = "  Публикувано: 9 юни 2026  ";
+  const extractDetails = mock.fn(async (page: Page) => {
+    assert.equal(page, fixture.page);
+    return {
+      title: "Provider title",
+      dateText,
+      contentHtml: "<h2>Provider heading</h2><p>Keep <strong>formatting</strong>.</p>",
+    };
+  });
+  const parsePublicationDate = mock.fn((value: string) => {
+    assert.equal(value, dateText);
+    return "2026-06-08T21:00:00.000Z";
+  });
+  const source = createBrowserSource({ ...options, extractDetails, parsePublicationDate }, fixture);
+  try {
+    assert.deepEqual(await source.fetchItem({ identifier }), {
+      title: "Provider title",
+      datePublished: "2026-06-08T21:00:00.000Z",
+      message: "## Provider heading\n\nKeep **formatting**.",
+    });
+    assert.equal(extractDetails.mock.callCount(), 1);
+    assert.equal(parsePublicationDate.mock.callCount(), 1);
+    assert.equal(fixture.evaluate.mock.callCount(), 0);
+    assert.equal(fixture.closePage.mock.callCount(), 1);
+    assert.equal(fixture.delay.mock.callCount(), 1);
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("custom detail extraction still requires title and content before date conversion", async () => {
+  for (const [title, contentHtml, expected] of [
+    ["", "<p>Body</p>", /Failed to extract title/],
+    ["Title", "", /Failed to extract content/],
+  ] as const) {
+    const fixture = browserFixture();
+    const parsePublicationDate = mock.fn(() => {
+      throw new Error("Invalid content must fail before date parsing");
+    });
+    const source = createBrowserSource({
+      ...options,
+      async extractDetails() {
+        return { title, dateText: "Provider date", contentHtml };
+      },
+      parsePublicationDate,
+    }, fixture);
+    try {
+      await assert.rejects(source.fetchItem({ identifier }), expected);
+      assert.equal(parsePublicationDate.mock.callCount(), 0);
+      assert.equal(fixture.closePage.mock.callCount(), 1);
+      assert.equal(fixture.delay.mock.callCount(), 1);
+    } finally {
+      await source.close?.();
+    }
+  }
+});
+
+test("custom extraction and date-parser failures close pages, pace attempts and allow retry", async () => {
+  for (const hook of ["extractListing", "extractDetails", "parsePublicationDate"] as const) {
+    const fixture = browserFixture();
+    const failure = new Error(`${hook} failed`);
+    let fail = true;
+    const source = createBrowserSource({
+      ...options,
+      async extractListing() {
+        if (hook === "extractListing" && fail) {
+          throw failure;
+        }
+        return [{ url: identifier, title: "Listing title", date: "Listing date" }];
+      },
+      async extractDetails() {
+        if (hook === "extractDetails" && fail) {
+          throw failure;
+        }
+        return { title: "Detail title", dateText: "Provider date", contentHtml: "<p>Body</p>" };
+      },
+      parsePublicationDate() {
+        if (hook === "parsePublicationDate" && fail) {
+          throw failure;
+        }
+        return "2026-06-09T00:00:00.000Z";
+      },
+    }, fixture);
+    try {
+      const attempt = () => {
+        if (hook === "extractListing") {
+          return source.discoverItems();
+        }
+        return source.fetchItem({ identifier });
+      };
+      await assert.rejects(attempt, failure);
+      assert.equal(fixture.closePage.mock.callCount(), 1);
+      assert.equal(fixture.delay.mock.callCount(), 1);
+      fail = false;
+      await attempt();
+      assert.equal(fixture.closePage.mock.callCount(), 2);
+      assert.equal(fixture.delay.mock.callCount(), 2);
+      assert.equal(fixture.launchBrowser.mock.callCount(), 1);
+    } finally {
+      await source.close?.();
+    }
+    assert.equal(fixture.closeBrowser.mock.callCount(), 1);
+  }
+});
+
 test("detail output retains legacy metadata, clone cleanup and Markdown with no listing fallback", async () => {
   const fixture = browserFixture();
   const source = createBrowserSource(options, fixture);
@@ -173,6 +315,47 @@ test("date conversion retains short years, separators, overflow handling and cur
   time.remove();
   assert.equal((await source.fetchItem({ identifier })).datePublished, now.toISOString());
   await source.close?.();
+});
+
+test("exported date parsers retain numeric dates and every Bulgarian month with exact date validation", (context) => {
+  const now = new Date("2026-11-11T16:00:00.000Z");
+  context.mock.timers.enable({ apis: ["Date"], now });
+  const months = [
+    "Януари", "Февруари", "Март", "Април", "Май", "Юни",
+    "Юли", "Август", "Септември", "Октомври", "Ноември", "Декември",
+  ];
+  for (const [index, month] of months.entries()) {
+    assert.equal(parseBulgarianMonthDate(`  9 ${month} 2026  `), new Date(2026, index, 9).toISOString());
+  }
+  assert.equal(parseBulgarianMonthDate("29 февруари 2024"), new Date(2024, 1, 29).toISOString());
+  for (const invalid of [
+    "", "9 June 2026", "09.06.2026", "9 юни 26", "9 юни 2026 г.",
+    "31 февруари 2026", "29 февруари 2026", "0 юни 2026", "32 юни 2026", "1 януари 0001",
+  ]) {
+    assert.equal(parseBulgarianMonthDate(invalid), now.toISOString());
+  }
+  assert.equal(parseBulgarianDate("09.06.2026"), "2026-06-09T00:00:00.000Z");
+  assert.equal(parseBulgarianDate("17/07/25"), "2025-07-17T00:00:00.000Z");
+  assert.equal(parseBulgarianDate("31.02.2026"), "2026-03-03T00:00:00.000Z");
+  assert.equal(parseBulgarianDate("9 юни 2026"), now.toISOString());
+});
+
+test("month-name dates retain local midnight in UTC and Europe/Sofia including summer time", () => {
+  const moduleUrl = new URL("../dist/esm/browser.js", import.meta.url).href;
+  const script = [
+    `import { parseBulgarianMonthDate, parseBulgarianDate } from ${JSON.stringify(moduleUrl)};`,
+    'console.log(JSON.stringify([parseBulgarianMonthDate("9 януари 2026"), parseBulgarianMonthDate("9 юни 2026"), parseBulgarianDate("09.06.2026")]));',
+  ].join("\n");
+  for (const [timezone, expected] of [
+    ["UTC", ["2026-01-09T00:00:00.000Z", "2026-06-09T00:00:00.000Z", "2026-06-09T00:00:00.000Z"]],
+    ["Europe/Sofia", ["2026-01-08T22:00:00.000Z", "2026-06-08T21:00:00.000Z", "2026-06-09T00:00:00.000Z"]],
+  ] as const) {
+    const actual = execFileSync(process.execPath, ["--input-type=module", "-e", script], {
+      encoding: "utf8",
+      env: { ...process.env, TZ: timezone },
+    });
+    assert.deepEqual(JSON.parse(actual), expected);
+  }
 });
 
 test("missing detail title and content fail without listing payload fallback and pace failures", async () => {

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0
+
+- Add optional browser listing, detail extraction and publication-date hooks so
+  sources can preserve their existing provider formats.
+- Apply browser reuse, page cleanup, request pacing, content validation and
+  Markdown conversion to custom extraction, including failed callbacks.
+- Export shared numeric and Bulgarian month-name date parsers, preserving legacy
+  date validation, local-midnight conversion and current-time fallback.
+
 ## 0.2.0
 
 - Add the `browser` entrypoint for browser listing and detail collection with

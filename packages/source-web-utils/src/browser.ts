@@ -7,6 +7,18 @@ export interface BrowserDependencies {
   delay: () => Promise<void>;
 }
 
+export interface BrowserPostLink {
+  url: string;
+  title: string;
+  date: string;
+}
+
+export interface BrowserPostDetails {
+  title: string;
+  dateText: string;
+  contentHtml: string;
+}
+
 export interface BrowserSourceOptions {
   indexUrl: string;
   selectors: {
@@ -25,6 +37,9 @@ export interface BrowserSourceOptions {
   urlFilter?: (url: string) => boolean;
   unwantedElements: readonly string[];
   dedupe?: "first" | "last";
+  extractListing?: (page: Page) => Promise<BrowserPostLink[]>;
+  extractDetails?: (page: Page) => Promise<BrowserPostDetails>;
+  parsePublicationDate?: (dateText: string) => string;
 }
 
 const defaults: BrowserDependencies = {
@@ -42,7 +57,7 @@ const defaults: BrowserDependencies = {
 };
 
 /** Retain the legacy DD.MM.YYYY, DD.MM.YY and slash-date conversion and fallback. */
-function parsePublicationDate(dateText: string): string {
+export function parseBulgarianDate(dateText: string): string {
   const normalized = dateText.trim().replaceAll("/", ".");
   const parts = normalized.split(".");
   if (parts.length === 3) {
@@ -56,7 +71,45 @@ function parsePublicationDate(dateText: string): string {
   return new Date().toISOString();
 }
 
-async function extractListing(page: Page, options: BrowserSourceOptions) {
+const bulgarianMonths: Record<string, number> = {
+  януари: 1,
+  февруари: 2,
+  март: 3,
+  април: 4,
+  май: 5,
+  юни: 6,
+  юли: 7,
+  август: 8,
+  септември: 9,
+  октомври: 10,
+  ноември: 11,
+  декември: 12,
+};
+
+/** Retain local-midnight month-name conversion and current-time fallback. */
+export function parseBulgarianMonthDate(dateText: string): string {
+  const match = /^(\d{1,2})\s+(\S+)\s+(\d{4})$/.exec(dateText.trim());
+  if (!match) {
+    return new Date().toISOString();
+  }
+  const [, dayText = "", monthName = "", yearText = ""] = match;
+  const month = bulgarianMonths[monthName.toLowerCase()];
+  if (!month) {
+    return new Date().toISOString();
+  }
+  const day = Number.parseInt(dayText, 10);
+  const year = Number.parseInt(yearText, 10);
+  const date = new Date(year, month - 1, day, 0, 0, 0, 0);
+  if (Number.isNaN(date.getTime())
+      || date.getDate() !== day
+      || date.getMonth() !== month - 1
+      || date.getFullYear() !== year) {
+    return new Date().toISOString();
+  }
+  return date.toISOString();
+}
+
+async function extractListing(page: Page, options: BrowserSourceOptions): Promise<BrowserPostLink[]> {
   return page.evaluate((selectors) => {
     const posts: { url: string; title: string; date: string }[] = [];
     const containers = document.querySelectorAll(selectors.POST_CONTAINER);
@@ -76,7 +129,7 @@ async function extractListing(page: Page, options: BrowserSourceOptions) {
   }, options.selectors.INDEX);
 }
 
-async function extractDetails(page: Page, options: BrowserSourceOptions) {
+async function extractDetails(page: Page, options: BrowserSourceOptions): Promise<BrowserPostDetails> {
   return page.evaluate(({ selectors, unwantedElements }) => {
     const title = document.querySelector(selectors.TITLE)?.textContent?.trim() || "";
     const dateText = document.querySelector(selectors.DATE)?.textContent?.trim() || "";
@@ -133,6 +186,9 @@ export function createBrowserSource(
   return {
     async discoverItems() {
       const posts = await withPage(options.indexUrl, async (page) => {
+        if (options.extractListing) {
+          return options.extractListing(page);
+        }
         return extractListing(page, options);
       });
       const urlFilter = options.urlFilter;
@@ -164,7 +220,9 @@ export function createBrowserSource(
     },
     async fetchItem(item): Promise<SourceContent> {
       return withPage(item.identifier, async (page) => {
-        const details = await extractDetails(page, options);
+        const details = options.extractDetails
+          ? await options.extractDetails(page)
+          : await extractDetails(page, options);
         if (!details.title) {
           throw new Error(`Failed to extract title from ${item.identifier}`);
         }
@@ -173,7 +231,7 @@ export function createBrowserSource(
         }
         return {
           title: details.title,
-          datePublished: parsePublicationDate(details.dateText),
+          datePublished: (options.parsePublicationDate ?? parseBulgarianDate)(details.dateText),
           message: markdown.turndown(details.contentHtml),
         };
       });
