@@ -32,7 +32,7 @@ const options: BrowserSourceOptions = {
 };
 const articleHtml = '<h1> Detail title </h1><time>09.06.2026</time><article><h2>Repair</h2><p>See <a href="https://example.com/plan.pdf">plan</a>.</p><pre><code>one\ntwo</code></pre><script>noise()</script><style>noise</style><nav>Nav</nav><div class="share">Share</div></article>';
 
-function browserFixture(html = articleHtml) {
+function browserFixture(html = articleHtml, navigationStatus?: number) {
   const window = new Window({ url: options.indexUrl });
   window.document.write(html);
   const closePage = mock.fn(async () => {
@@ -43,7 +43,17 @@ function browserFixture(html = articleHtml) {
   });
   const goto = mock.fn(async (...args: [string, unknown]) => {
     void args;
-    return undefined;
+    if (navigationStatus === undefined) {
+      return undefined;
+    }
+    return {
+      ok() {
+        return navigationStatus >= 200 && navigationStatus < 300;
+      },
+      status() {
+        return navigationStatus;
+      },
+    };
   });
   const route = mock.fn(async (...args: [string, (route: Route) => Promise<void>]) => {
     void args;
@@ -119,13 +129,65 @@ test("source filters run on literal identifiers and optional deduplication keeps
 });
 
 test("empty listing returns no candidates and still closes and paces the index request", async () => {
-  const fixture = browserFixture("<main>No current notices</main>");
+  const fixture = browserFixture("<main>No current notices</main>", 200);
   const source = createBrowserSource(options, fixture);
   assert.deepEqual(await source.discoverItems(), { items: [] });
   assert.equal(fixture.closePage.mock.callCount(), 1);
   assert.equal(fixture.delay.mock.callCount(), 1);
   await source.close?.();
   assert.equal(fixture.closeBrowser.mock.callCount(), 1);
+});
+
+test("HTTP listing errors fail before extraction and retain page cleanup and pacing", async () => {
+  for (const status of [403, 404, 429, 500]) {
+    const fixture = browserFixture("<main>No current notices</main>", status);
+    const extractListing = mock.fn(async () => {
+      return [{ url: identifier, title: "Unexpected listing", date: "" }];
+    });
+    const source = createBrowserSource({ ...options, extractListing }, fixture);
+    try {
+      await assert.rejects(source.discoverItems(), {
+        message: `HTTP ${status} while loading ${options.indexUrl}`,
+      });
+      assert.equal(extractListing.mock.callCount(), 0);
+      assert.equal(fixture.evaluate.mock.callCount(), 0);
+      assert.equal(fixture.closePage.mock.callCount(), 1);
+      assert.equal(fixture.delay.mock.callCount(), 1);
+    } finally {
+      await source.close?.();
+    }
+    assert.equal(fixture.closeBrowser.mock.callCount(), 1);
+  }
+});
+
+test("HTTP detail errors fail before content conversion and retain page cleanup and pacing", async () => {
+  for (const status of [403, 404, 429, 500]) {
+    const fixture = browserFixture(articleHtml, status);
+    const extractDetails = mock.fn(async () => {
+      return {
+        title: "Unexpected title",
+        dateText: "09.06.2026",
+        contentHtml: "<p>Unexpected body</p>",
+      };
+    });
+    const parsePublicationDate = mock.fn(() => {
+      return "2026-06-09T00:00:00.000Z";
+    });
+    const source = createBrowserSource({ ...options, extractDetails, parsePublicationDate }, fixture);
+    try {
+      await assert.rejects(source.fetchItem({ identifier }), {
+        message: `HTTP ${status} while loading ${identifier}`,
+      });
+      assert.equal(extractDetails.mock.callCount(), 0);
+      assert.equal(parsePublicationDate.mock.callCount(), 0);
+      assert.equal(fixture.evaluate.mock.callCount(), 0);
+      assert.equal(fixture.closePage.mock.callCount(), 1);
+      assert.equal(fixture.delay.mock.callCount(), 1);
+    } finally {
+      await source.close?.();
+    }
+    assert.equal(fixture.closeBrowser.mock.callCount(), 1);
+  }
 });
 
 test("custom listing extraction retains literal identifiers, filtering and deduplication", async () => {
@@ -265,7 +327,7 @@ test("custom extraction and date-parser failures close pages, pace attempts and 
 });
 
 test("detail output retains legacy metadata, clone cleanup and Markdown with no listing fallback", async () => {
-  const fixture = browserFixture();
+  const fixture = browserFixture(articleHtml, 200);
   const source = createBrowserSource(options, fixture);
   assert.deepEqual(await source.fetchItem({ identifier, payload: { title: "Listing title", date: "2000-01-01" } }), {
     title: "Detail title",
