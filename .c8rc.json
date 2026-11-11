@@ -1,0 +1,9 @@
+{
+  "all": true,
+  "src": ["packages"],
+  "include": ["packages/*/dist/esm/**/*.js", "packages/*/src/**/*.ts"],
+  "exclude": ["**/*.d.ts"],
+  "exclude-after-remap": false,
+  "reporter": ["text", "lcovonly", "json-summary"],
+  "reports-dir": "coverage"
+}

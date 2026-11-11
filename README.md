@@ -29,6 +29,11 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 
 Use Node.js 20.3 or later and the pinned pnpm version. Run `pnpm install --frozen-lockfile` and `pnpm check`. CI checks Node.js 20, 22, and 24 and packs each package.
 
+Run `pnpm test:coverage` for source-mapped coverage across all packages. Node 22 CI
+uploads the LCOV report; eligible runs submit it to SonarQube Cloud and wait for
+the quality gate. See [SONAR.md](SONAR.md) for organization setup, report checks
+and pull-request behavior.
+
 Tests are written in TypeScript, type-checked with `tsc`, and run with Node's test runner through `tsx`. Use JavaScript for configuration and build helpers when TypeScript would add unnecessary setup.
 
 Packages own independent SemVer versions and are published manually after review. Package manifests, npm versions, and package-specific Git tags identify releases. Existing Obo crawlers remain active until each package migration lands separately.

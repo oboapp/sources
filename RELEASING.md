@@ -6,7 +6,7 @@ This is the canonical release procedure for every package in this repository, in
 
 Update the affected package's version and changelog in a reviewed PR. Use SemVer: patch for compatible fixes, minor for compatible additions, and an explicit breaking version for contract changes (a minor increment during 0.x). Use `pnpm add` or `pnpm remove` for dependency changes.
 
-Run `pnpm install --frozen-lockfile`, `pnpm check`, and the package's `pnpm pack` command. Inspect available CI and Sonar findings and the actual quality gate before merge. Sonar coverage in this repository is tracked in [oboapp/oboapp#663](https://github.com/oboapp/oboapp/issues/663); report unavailable results explicitly while that setup is pending.
+Run `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm test:coverage`, and the package's `pnpm pack` command. Inspect available CI and Sonar findings and the actual quality gate before merge. See [SONAR.md](SONAR.md) for coverage mapping, project setup and eligible PR analysis. Report unavailable Sonar results explicitly while account setup or analysis is pending.
 
 Merge the PR after the applicable checks pass. Publication is a separate action under the user's release authorization. Reuse authorization already given in the session. Confirm npm account/scope access before the first release of a package. Keep credentials outside this repository.
 
