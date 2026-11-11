@@ -1,0 +1,45 @@
+{
+  "capturedAt": "2026-11-11",
+  "frozenTime": "2026-11-11T10:00:00.000Z",
+  "detailUrl": "https://mladost.bg/gradska-i-okolna-sreda/planovi-remonti/avariyno-remontni-raboti-na-toplofikatsiya-na-ul-badnina",
+  "items": [
+    {
+      "identifier": "https://mladost.bg/gradska-i-okolna-sreda/planovi-remonti/avariyno-remontni-raboti-na-toplofikatsiya-na-ul-badnina"
+    },
+    {
+      "identifier": "https://mladost.bg/gradska-i-okolna-sreda/planovi-remonti/vremenno-zatvaryane-na-yuzhnoto-platno-na-bul-prof-marko-semov-mezhdu-usbal-po-onkologiya-i-bul-andrey-saharov"
+    },
+    {
+      "identifier": "https://mladost.bg/gradska-i-okolna-sreda/planovi-remonti/remont-severen-trotoar-na-ul-bozhan-angelov"
+    },
+    {
+      "identifier": "https://mladost.bg/gradska-i-okolna-sreda/planovi-remonti/neplanirano-spirane-na-vodopodavane"
+    },
+    {
+      "identifier": "https://mladost.bg/gradska-i-okolna-sreda/planovi-remonti/ogranichitelen-rezhim-za-vlizane-na-patni-ps-po-bul-andrey-saharov-i-ul-prof-marko-semov-poradi-remont-na-most-na-r-vartopo"
+    },
+    {
+      "identifier": "https://mladost.bg/gradska-i-okolna-sreda/planovi-remonti/remont-v-podlez-na-okrazhna-bolnitsa"
+    },
+    {
+      "identifier": "https://mladost.bg/gradska-i-okolna-sreda/planovi-remonti/remontni-raboti-po-gazoprenosna-mrezha"
+    }
+  ],
+  "content": {
+    "title": "Аварийно-ремонтни работи на топлофикация на ул. „Бъднина“",
+    "datePublished": "2026-11-11T10:00:00.000Z",
+    "message": "**УВАЖАЕМ****И**  **Г****РАЖДАНИ ,**\n\nВъв връзка с изпълнение на авариен ремонт на топлопровод, Ви уведомяваме, че  **ул. „Бъднина“ , жк. „Младост-3“** **ще бъде затворена за движение на МПС и пешеходци  в участъка между бл.320 и бл.321  в периода** **от  9:30 ч. на 19.09.2025 г.  до 24:00 ч. на 26.09.2025 г.**\n\nИзвиняваме се за причиненото неудобство, което ще възникне в процеса на строително-монтажните работи."
+  },
+  "provenance": {
+    "originalCommit": "01f629e830fb0e45eaa96278b42efad12415d974",
+    "originalFiles": [
+      "ingest/crawlers/mladost-bg/extractors.ts",
+      "ingest/crawlers/mladost-bg/selectors.ts",
+      "ingest/crawlers/shared/date-utils.ts",
+      "ingest/crawlers/shared/extractors.ts",
+      "ingest/crawlers/shared/markdown.ts"
+    ],
+    "dateText": "Публикувано: \n      20 Октомври 2025",
+    "note": "Expected output comes from original Obo extractors, date parsing and Markdown conversion. No new source package runtime was loaded."
+  }
+}
