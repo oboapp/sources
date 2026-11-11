@@ -1,6 +1,6 @@
 {
   "name": "@oboapp/source-mladost-bg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Webpage source for Sofia district Mladost",
   "main": "./dist/cjs/index.js",
   "scripts": {
