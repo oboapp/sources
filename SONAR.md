@@ -52,12 +52,15 @@ verify Sonar's imported measurements independently.
    coverage with the uploaded report and inspect new-code findings.
 6. Check the actual quality gate status in SonarQube Cloud. Scanner upload success
    alone is insufficient. After the first successful PR run, require the
-   **SonarQube** check in the repository's existing branch protection or ruleset.
+   **SonarQube** check by creating or updating branch protection or a ruleset.
    Retain the Node 20, 22 and 24 checks.
 
 The scanner waits for the quality gate and fails the job if it fails. A missing
 token produces an explicit configuration error. The first analysis can establish
 a baseline without a computed new-code gate; verify a subsequent analysis too.
+A PR that only changes tooling or documentation can have no analyzed new code.
+Its gate does not establish the packages' overall baseline. Verify coverage,
+findings and the gate in a main-branch analysis after enabling CI analysis.
 
 ## Pull requests and credentials
 
