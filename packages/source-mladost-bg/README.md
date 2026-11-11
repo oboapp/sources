@@ -34,7 +34,9 @@ The captured public detail page includes `Публикувано:` in its visibl
 
 One Chromium browser is reused across the scan. Each page closes after its attempt, and listing and detail attempts wait two seconds, including failures. `close()` releases the browser. Install the Playwright Chromium revision required by the package's `source-web-utils` dependency before running collection.
 
-Discovery and fetch failures propagate to the caller. Obo owns deduplication, retries on later scans, validation, complete raw persistence, scheduling and ingestion. The package has no database access.
+Discovery and fetch failures propagate to the caller. Version 0.1.1 uses `source-web-utils` 0.3.1 to reject failed HTTP responses before extracting listing or detail content. Successful empty listings remain valid. Cloud Run access currently receives HTTP 403; restoring provider access is tracked in [oboapp/oboapp#677](https://github.com/oboapp/oboapp/issues/677).
+
+Obo owns deduplication, retries on later scans, validation, complete raw persistence, scheduling and ingestion. The package has no database access.
 
 ## Feed and API check
 
