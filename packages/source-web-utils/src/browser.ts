@@ -171,7 +171,10 @@ export function createBrowserSource(
         }
         await route.continue();
       });
-      await page.goto(url, { waitUntil: "domcontentloaded" });
+      const response = await page.goto(url, { waitUntil: "domcontentloaded" });
+      if (response && !response.ok()) {
+        throw new Error(`HTTP ${response.status()} while loading ${url}`);
+      }
       return await extract(page);
     } finally {
       try {

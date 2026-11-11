@@ -63,6 +63,11 @@ including the listing and failed requests. `BrowserDependencies` allows tests
 to supply browser launch and delay functions. Call `close` in `finally`.
 Hook failures follow the same page cleanup and request pacing as other failures.
 
+Non-success navigation responses fail with their HTTP status and requested URL
+before listing or detail extraction. Successful empty listings still return no
+items. HTTP failures retain page cleanup and request pacing, and propagate to Obo
+for scan or item failure handling.
+
 ## Runtime and checks
 
 Requires Node 20.3 or later and the Chromium revision for pinned Playwright 1.61.1.

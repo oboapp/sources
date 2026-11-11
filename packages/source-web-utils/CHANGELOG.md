@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1
+
+- Reject unsuccessful browser navigation responses before listing or detail
+  extraction, including HTTP 403, 404, 429 and 500 responses.
+- Preserve successful empty listings, page cleanup and request pacing when a
+  provider returns an HTTP error.
+
 ## 0.3.0
 
 - Add optional browser listing, detail extraction and publication-date hooks so

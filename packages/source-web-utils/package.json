@@ -1,6 +1,6 @@
 {
   "name": "@oboapp/source-web-utils",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "RSS and browser collection helpers for Obo data source packages",
   "main": "./dist/cjs/index.js",
   "scripts": {
