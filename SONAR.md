@@ -3,6 +3,8 @@
 This repository uses one SonarQube Cloud project, `oboapp_sources`, in the existing
 `oboapp` organization. The organization's SonarQube for OSS plan covers its public
 repositories, including this one. Each npm package keeps its independent version.
+Sonar also analyzes CI workflow YAML for security findings. Workflow configuration
+is excluded from runtime test coverage; LCOV measures package TypeScript only.
 
 ## Local coverage
 
