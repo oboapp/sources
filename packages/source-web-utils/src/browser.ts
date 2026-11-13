@@ -39,7 +39,8 @@ export interface BrowserSourceOptions {
   dedupe?: "first" | "last";
   extractListing?: (page: Page) => Promise<BrowserPostLink[]>;
   extractDetails?: (page: Page) => Promise<BrowserPostDetails>;
-  parsePublicationDate?: (dateText: string) => string;
+  filterPost?: (post: BrowserPostLink) => boolean;
+  parsePublicationDate?: (dateText: string, post: BrowserPostLink) => string;
 }
 
 const defaults: BrowserDependencies = {
@@ -157,6 +158,7 @@ export function createBrowserSource(
   dependencies: BrowserDependencies = defaults,
 ): DataSource {
   let browser: Browser | undefined;
+  const listingPosts = new Map<string, BrowserPostLink>();
   const markdown = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced" });
 
   async function withPage<T>(url: string, extract: (page: Page) => Promise<T>): Promise<T> {
@@ -188,6 +190,7 @@ export function createBrowserSource(
 
   return {
     async discoverItems() {
+      listingPosts.clear();
       const posts = await withPage(options.indexUrl, async (page) => {
         if (options.extractListing) {
           return options.extractListing(page);
@@ -195,11 +198,17 @@ export function createBrowserSource(
         return extractListing(page, options);
       });
       const urlFilter = options.urlFilter;
-      const filtered = urlFilter
+      const matchingUrls = urlFilter
         ? posts.filter((post) => {
           return urlFilter(post.url);
         })
         : posts;
+      const filterPost = options.filterPost;
+      const filtered = filterPost
+        ? matchingUrls.filter((post) => {
+          return filterPost(post);
+        })
+        : matchingUrls;
       let candidates = filtered;
       if (options.dedupe === "last") {
         candidates = Array.from(new Map(filtered.map((post) => {
@@ -217,6 +226,7 @@ export function createBrowserSource(
       }
       return {
         items: candidates.map((post) => {
+          listingPosts.set(post.url, post);
           return { identifier: post.url };
         }),
       };
@@ -234,7 +244,10 @@ export function createBrowserSource(
         }
         return {
           title: details.title,
-          datePublished: (options.parsePublicationDate ?? parseBulgarianDate)(details.dateText),
+          datePublished: (options.parsePublicationDate ?? parseBulgarianDate)(
+            details.dateText,
+            listingPosts.get(item.identifier) ?? { url: item.identifier, title: "", date: "" },
+          ),
           message: markdown.turndown(details.contentHtml),
         };
       });
@@ -242,6 +255,7 @@ export function createBrowserSource(
     async close() {
       const current = browser;
       browser = undefined;
+      listingPosts.clear();
       await current?.close();
     },
   };
