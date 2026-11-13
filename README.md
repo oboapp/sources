@@ -21,6 +21,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | [`@oboapp/source-sofiyska-voda`](packages/source-sofiyska-voda) | Paginated ArcGIS water outages with provider geometry from Sofiyska Voda |
 | [`@oboapp/source-lozenets-sofia-bg`](packages/source-lozenets-sofia-bg) | RSS and webpage source for Sofia district Lozenets |
 | [`@oboapp/source-studentski-bg`](packages/source-studentski-bg) | RSS and webpage source for Sofia district Studentski |
+| [`@oboapp/source-rayon-pancharevo-bg`](packages/source-rayon-pancharevo-bg) | Infrastructure announcements and webpage content for Sofia district Pancharevo |
 | [`@oboapp/source-sredec-sofia-org`](packages/source-sredec-sofia-org) | Five paginated category feeds and webpage content for Sofia district Sredets |
 | [`@oboapp/source-rayon-ilinden-bg`](packages/source-rayon-ilinden-bg) | Browser listing and webpage content for Sofia district Ilinden |
 | [`@oboapp/source-nadezhda-org`](packages/source-nadezhda-org) | Browser listing and webpage content for Sofia district Nadezhda |
