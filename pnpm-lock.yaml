@@ -132,6 +132,22 @@ importers:
         specifier: 20.0.11
         version: 20.0.11
 
+  packages/source-rayon-pancharevo-bg:
+    dependencies:
+      '@oboapp/source-sdk':
+        specifier: 0.1.1
+        version: 0.1.1
+      '@oboapp/source-web-utils':
+        specifier: workspace:*
+        version: link:../source-web-utils
+    devDependencies:
+      happy-dom:
+        specifier: 20.0.11
+        version: 20.0.11
+      playwright:
+        specifier: 1.61.1
+        version: 1.61.1
+
   packages/source-sdk: {}
 
   packages/source-sdvr-mvr-bg:
