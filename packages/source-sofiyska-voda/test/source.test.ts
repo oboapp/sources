@@ -214,6 +214,27 @@ test("rejects repeated cursors and repeating provider pages without an endless p
   await source.close?.();
 });
 
+test("detects reordered repeated pages while retaining zero IDs and ignoring unusable identity noise", async () => {
+  const fetch = jsonFetch(
+    { features: [featureWithId(2), { geometry: feature.geometry }, featureWithId(10)], exceededTransferLimit: true },
+    { features: [featureWithId(10), featureWithId(0), featureWithId(2), featureWithId(10), {}], exceededTransferLimit: true },
+    { features: [featureWithId(2), featureWithId(10), featureWithId(0)], exceededTransferLimit: true },
+  );
+  const source = createSofiyskaVodaSource({ fetch, warn: () => {} });
+  try {
+    const first = await source.discoverItems();
+    assert.deepEqual(first.items, [{ identifier: `${baseUrl}/2/2` }, { identifier: `${baseUrl}/2/10` }]);
+    assert.ok(first.nextCursor);
+    const second = await source.discoverItems(first.nextCursor);
+    assert.deepEqual(second.items, [{ identifier: `${baseUrl}/2/0` }]);
+    assert.ok(second.nextCursor);
+    await assert.rejects(source.discoverItems(second.nextCursor), /repeated page/i);
+    assert.equal(fetch.mock.callCount(), 3);
+  } finally {
+    await source.close?.();
+  }
+});
+
 test("accepts a final duplicate page when the provider ends pagination", async () => {
   const source = createSofiyskaVodaSource({ fetch: jsonFetch(
     { features: [feature], exceededTransferLimit: true },

@@ -41,7 +41,7 @@ function readCursor(cursor: string | undefined): { layerIndex: number; offset: n
   if (cursor === undefined) {
     return { layerIndex: 0, offset: 0 };
   }
-  const match = /^([01]):(0|[1-9][0-9]*)$/.exec(cursor);
+  const match = /^([01]):(0|[1-9]\d*)$/.exec(cursor);
   const layerIndex = Number(match?.[1]);
   const offset = Number(match?.[2]);
   if (!match || !Number.isSafeInteger(offset) || offset % PAGE_SIZE !== 0) {
@@ -148,8 +148,10 @@ export function createSofiyskaVodaSource(dependencies: SofiyskaVodaDependencies 
       }
       const payload = parseResponse(await response.json(), layer.id);
       requestSignal.throwIfAborted();
-      const identifiers = payload.features.map((feature) => feature.attributes?.OBJECTID);
-      const signature = `${layer.id}:${JSON.stringify([...new Set(identifiers)].sort())}`;
+      const identifiers = payload.features
+        .map((feature) => feature.attributes?.OBJECTID)
+        .filter((objectId): objectId is number => objectId !== undefined);
+      const signature = `${layer.id}:${JSON.stringify([...new Set(identifiers)].sort((left, right) => left - right))}`;
       if (payload.exceededTransferLimit && payload.rawCount > 0 && pageSignatures.has(signature)) {
         throw new Error(`ArcGIS returned a repeated page for layer ${layer.id}`);
       }
