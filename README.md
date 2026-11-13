@@ -18,6 +18,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | [`@oboapp/source-rayon-oborishte-bg`](packages/source-rayon-oborishte-bg) | RSS and webpage source for Sofia district Oborishte |
 | [`@oboapp/source-so-slatina-org`](packages/source-so-slatina-org) | RSS and webpage source for Sofia district Slatina |
 | [`@oboapp/source-toplo-bg`](packages/source-toplo-bg) | Listing-only heating incidents with synthetic identifiers from Toplofikatsia Sofia |
+| [`@oboapp/source-sofiyska-voda`](packages/source-sofiyska-voda) | Paginated ArcGIS water outages with provider geometry from Sofiyska Voda |
 | [`@oboapp/source-lozenets-sofia-bg`](packages/source-lozenets-sofia-bg) | RSS and webpage source for Sofia district Lozenets |
 | [`@oboapp/source-studentski-bg`](packages/source-studentski-bg) | RSS and webpage source for Sofia district Studentski |
 | [`@oboapp/source-sredec-sofia-org`](packages/source-sredec-sofia-org) | Five paginated category feeds and webpage content for Sofia district Sredets |

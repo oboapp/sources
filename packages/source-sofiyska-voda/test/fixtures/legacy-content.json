@@ -1,0 +1,1436 @@
+[
+  {
+    "name": "full current outage",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T08:00:00.000Z",
+      "timespanEnd": "2026-11-13T12:00:00.000Z"
+    }
+  },
+  {
+    "name": "same object in planned layer",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 3,
+      "name": "Планирани спирания",
+      "titlePrefix": "Планирано спиране"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/3/123",
+    "content": {
+      "title": "Планирано спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Планирани спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Планирани спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 3,
+              "layerName": "Планирани спирания",
+              "titlePrefix": "Планирано спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T08:00:00.000Z",
+      "timespanEnd": "2026-11-13T12:00:00.000Z"
+    }
+  },
+  {
+    "name": "polygon before paths and point",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "rings": [
+          [
+            [
+              23.31,
+              42.69
+            ],
+            [
+              23.32,
+              42.69
+            ],
+            [
+              23.32,
+              42.7
+            ],
+            [
+              23.31,
+              42.69
+            ]
+          ]
+        ],
+        "paths": [
+          [
+            [
+              23.31,
+              42.69
+            ],
+            [
+              23.32,
+              42.69
+            ],
+            [
+              23.32,
+              42.7
+            ],
+            [
+              23.31,
+              42.69
+            ]
+          ]
+        ],
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    23.31,
+                    42.69
+                  ],
+                  [
+                    23.32,
+                    42.69
+                  ],
+                  [
+                    23.32,
+                    42.7
+                  ],
+                  [
+                    23.31,
+                    42.69
+                  ]
+                ]
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T08:00:00.000Z",
+      "timespanEnd": "2026-11-13T12:00:00.000Z"
+    }
+  },
+  {
+    "name": "first usable path",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "paths": [
+          [
+            [
+              23.3,
+              42.6
+            ]
+          ],
+          [
+            [
+              23.31,
+              42.69
+            ],
+            [
+              23.32,
+              42.69
+            ],
+            [
+              23.32,
+              42.7
+            ],
+            [
+              23.31,
+              42.69
+            ]
+          ],
+          [
+            [
+              23.4,
+              42.8
+            ],
+            [
+              23.5,
+              42.9
+            ]
+          ]
+        ]
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [
+                [
+                  23.31,
+                  42.69
+                ],
+                [
+                  23.32,
+                  42.69
+                ],
+                [
+                  23.32,
+                  42.7
+                ],
+                [
+                  23.31,
+                  42.69
+                ]
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T08:00:00.000Z",
+      "timespanEnd": "2026-11-13T12:00:00.000Z"
+    }
+  },
+  {
+    "name": "point after unusable paths",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "paths": [
+          [
+            [
+              23.3,
+              42.6
+            ]
+          ]
+        ],
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T08:00:00.000Z",
+      "timespanEnd": "2026-11-13T12:00:00.000Z"
+    }
+  },
+  {
+    "name": "duplicate description and zero district",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": "ул. Тестова 1",
+        "ALERTTYPE": null,
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 0,
+        "CONTACT": "",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1",
+      "message": "ул. Тестова 1\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15",
+      "markdownText": "ул. Тестова 1\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "location": "ул. Тестова 1",
+              "district": 0
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T08:00:00.000Z",
+      "timespanEnd": "2026-11-13T12:00:00.000Z"
+    }
+  },
+  {
+    "name": "sparse attributes",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 0,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/0",
+    "content": {
+      "title": "Текущо спиране",
+      "message": "Категория: Текущи спирания\nПоследно обновяване: 13 ноември 2026 г. в 9:15",
+      "markdownText": "**Категория:** Текущи спирания  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране"
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T07:15:00.000Z",
+      "timespanEnd": "2026-11-13T07:15:00.000Z"
+    }
+  },
+  {
+    "name": "missing start with valid end",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": null,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T07:15:00.000Z",
+      "timespanEnd": "2026-11-13T07:15:00.000Z"
+    }
+  },
+  {
+    "name": "valid start with missing end",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": null,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T07:15:00.000Z",
+      "timespanEnd": "2026-11-13T07:15:00.000Z"
+    }
+  },
+  {
+    "name": "old start with valid end",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 1 януари 1970 г. в 2:00\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 1 януари 1970 г. в 2:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T07:15:00.000Z",
+      "timespanEnd": "2026-11-13T07:15:00.000Z"
+    }
+  },
+  {
+    "name": "valid start with old end",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 1 януари 1970 г. в 2:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 1 януари 1970 г. в 2:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T07:15:00.000Z",
+      "timespanEnd": "2026-11-13T07:15:00.000Z"
+    }
+  },
+  {
+    "name": "invalid start with valid end",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1e+25,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T07:15:00.000Z",
+      "timespanEnd": "2026-11-13T07:15:00.000Z"
+    }
+  },
+  {
+    "name": "valid start with invalid end",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1e+25,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T07:15:00.000Z",
+      "timespanEnd": "2026-11-13T07:15:00.000Z"
+    }
+  },
+  {
+    "name": "publication falls back to start",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": null
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 13 ноември 2026 г. в 14:00\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T08:00:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T08:00:00.000Z",
+      "timespanEnd": "2026-11-13T12:00:00.000Z"
+    }
+  },
+  {
+    "name": "invalid publication falls back to start",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1e+25
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 13 ноември 2026 г. в 14:00\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T08:00:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T08:00:00.000Z",
+      "timespanEnd": "2026-11-13T12:00:00.000Z"
+    }
+  },
+  {
+    "name": "zero publication is epoch",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 0
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 10:00\nКрай: 13 ноември 2026 г. в 14:00\nПоследно обновяване: 1 януари 1970 г. в 2:00\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 10:00  \n**Край:** 13 ноември 2026 г. в 14:00  \n**Последно обновяване:** 1 януари 1970 г. в 2:00  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "1970-01-01T00:00:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T08:00:00.000Z",
+      "timespanEnd": "2026-11-13T12:00:00.000Z"
+    }
+  },
+  {
+    "name": "old fallback remains literal",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 2,
+        "LASTUPDATE": 1
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/2",
+    "content": {
+      "title": "Текущо спиране",
+      "message": "Категория: Текущи спирания\nПоследно обновяване: 1 януари 1970 г. в 2:00",
+      "markdownText": "**Категория:** Текущи спирания  \n**Последно обновяване:** 1 януари 1970 г. в 2:00",
+      "datePublished": "1970-01-01T00:00:00.001Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране"
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "1970-01-01T00:00:00.001Z",
+      "timespanEnd": "1970-01-01T00:00:00.001Z"
+    }
+  },
+  {
+    "name": "minimum accepted timespan",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1735689600000,
+        "ALERTEND": 1735689600000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 1 януари 2025 г. в 2:00\nКрай: 1 януари 2025 г. в 2:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 1 януари 2025 г. в 2:00  \n**Край:** 1 януари 2025 г. в 2:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2025-01-01T00:00:00.000Z",
+      "timespanEnd": "2025-01-01T00:00:00.000Z"
+    }
+  },
+  {
+    "name": "reversed bounds remain literal",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794571200000,
+        "ALERTEND": 1794556800000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": "https://gispx.sofiyskavoda.bg/arcgis/rest/services/WSI_PUBLIC/InfoCenter_Public/MapServer/2/123",
+    "content": {
+      "title": "Текущо спиране – ул. Тестова 1 – Авария",
+      "message": "ул. Тестова 1\n\nАвария на водопровод\n\nКатегория: Текущи спирания\nСтатус: In Progress\nНачало: 13 ноември 2026 г. в 14:00\nКрай: 13 ноември 2026 г. в 10:00\nПоследно обновяване: 13 ноември 2026 г. в 9:15\nРайон на СО (ID): 5\nКонтакт: 02/123-456",
+      "markdownText": "ул. Тестова 1\n\nАвария на водопровод\n\n**Категория:** Текущи спирания  \n**Статус:** In Progress  \n**Начало:** 13 ноември 2026 г. в 14:00  \n**Край:** 13 ноември 2026 г. в 10:00  \n**Последно обновяване:** 13 ноември 2026 г. в 9:15  \n**Район на СО (ID):** 5  \n**Контакт:** 02/123-456",
+      "datePublished": "2026-11-13T07:15:00.000Z",
+      "geoJson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                23.32,
+                42.7
+              ]
+            },
+            "properties": {
+              "layerId": 2,
+              "layerName": "Текущи спирания",
+              "titlePrefix": "Текущо спиране",
+              "alertId": "different-public-id",
+              "status": "In Progress",
+              "alertType": "Авария",
+              "location": "ул. Тестова 1",
+              "district": 5
+            }
+          }
+        ]
+      },
+      "categories": [
+        "water"
+      ],
+      "isRelevant": true,
+      "deepLinkUrl": "",
+      "timespanStart": "2026-11-13T12:00:00.000Z",
+      "timespanEnd": "2026-11-13T08:00:00.000Z"
+    }
+  },
+  {
+    "name": "missing identity",
+    "feature": {
+      "geometry": {
+        "x": 23.32,
+        "y": 42.7
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": null,
+    "content": null
+  },
+  {
+    "name": "missing geometry",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": null,
+    "content": null
+  },
+  {
+    "name": "single point path",
+    "feature": {
+      "attributes": {
+        "OBJECTID": 123,
+        "ALERTID": "different-public-id",
+        "LOCATION": "  ул.   Тестова \n  1 ",
+        "DESCRIPTION": " Авария \t на водопровод ",
+        "ALERTTYPE": "  Авария  ",
+        "ACTIVESTATUS": "In Progress",
+        "SOFIADISTRICT": 5,
+        "CONTACT": "02/123-456",
+        "START_": 1794556800000,
+        "ALERTEND": 1794571200000,
+        "LASTUPDATE": 1794554100000
+      },
+      "geometry": {
+        "paths": [
+          [
+            [
+              23.3,
+              42.6
+            ]
+          ]
+        ]
+      }
+    },
+    "layer": {
+      "id": 2,
+      "name": "Текущи спирания",
+      "titlePrefix": "Текущо спиране",
+      "where": "ACTIVESTATUS = 'In Progress'"
+    },
+    "identifier": null,
+    "content": null
+  }
+]

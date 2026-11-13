@@ -156,6 +156,12 @@ importers:
         specifier: 20.0.11
         version: 20.0.11
 
+  packages/source-sofiyska-voda:
+    dependencies:
+      '@oboapp/source-sdk':
+        specifier: 0.1.1
+        version: 0.1.1
+
   packages/source-sredec-sofia-org:
     dependencies:
       '@oboapp/source-sdk':
