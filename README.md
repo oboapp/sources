@@ -14,6 +14,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | --- | --- |
 | [`@oboapp/source-sdk`](packages/source-sdk) | Source contracts, isolated catalog metadata types, and discovery payload validation |
 | [`@oboapp/source-web-utils`](packages/source-web-utils) | Shared RSS parsing, browser listing and detail collection |
+| [`@oboapp/source-inspectorat-so-org`](packages/source-inspectorat-so-org) | Browser listing and webpage content for Sofia Inspectorate |
 | [`@oboapp/source-triaditsa-org`](packages/source-triaditsa-org) | Full-content RSS source for Sofia district Triaditsa |
 | [`@oboapp/source-rayon-oborishte-bg`](packages/source-rayon-oborishte-bg) | RSS and webpage source for Sofia district Oborishte |
 | [`@oboapp/source-so-slatina-org`](packages/source-so-slatina-org) | RSS and webpage source for Sofia district Slatina |

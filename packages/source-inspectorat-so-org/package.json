@@ -1,0 +1,69 @@
+{
+  "name": "@oboapp/source-inspectorat-so-org",
+  "version": "0.1.0",
+  "description": "News source for Sofia Inspectorate",
+  "main": "./dist/cjs/index.js",
+  "scripts": {
+    "test": "tsc -p test/tsconfig.json && tsx --test test/*.test.ts",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node scripts/finalize-build.mjs",
+    "prepack": "pnpm build"
+  },
+  "license": "Unlicense",
+  "type": "module",
+  "types": "./dist/cjs/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oboapp/sources.git",
+    "directory": "packages/source-inspectorat-so-org"
+  },
+  "engines": {
+    "node": ">=20.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "typesVersions": {
+    "*": {
+      "metadata": [
+        "dist/cjs/metadata.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    },
+    "./metadata": {
+      "import": {
+        "types": "./dist/esm/metadata.d.ts",
+        "default": "./dist/esm/metadata.js"
+      },
+      "require": {
+        "types": "./dist/cjs/metadata.d.ts",
+        "default": "./dist/cjs/metadata.js"
+      }
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@oboapp/source-sdk": "0.1.1",
+    "@oboapp/source-web-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "happy-dom": "20.0.11",
+    "playwright": "1.61.1"
+  }
+}
