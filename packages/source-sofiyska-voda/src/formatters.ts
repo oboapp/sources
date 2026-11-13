@@ -1,3 +1,5 @@
+import type { ArcGisAttributes } from "./types.js";
+
 /**
  * Text sanitization and formatting utilities
  */
@@ -64,7 +66,7 @@ const MARKDOWN_FORMAT: MessageFormat = {
 };
 
 function buildMessageInternal(
-  attributes: Record<string, unknown> | undefined,
+  attributes: ArcGisAttributes | undefined,
   layer: { name: string },
   format: MessageFormat,
   dateFormatter?: Intl.DateTimeFormat,
@@ -102,7 +104,7 @@ function buildMessageInternal(
   const metadata = [
     fmtLabel("Категория", layer.name),
     attributes?.ACTIVESTATUS
-      ? fmtLabel("Статус", String(attributes.ACTIVESTATUS))
+      ? fmtLabel("Статус", attributes.ACTIVESTATUS)
       : null,
     startDate ? fmtLabel("Начало", startDate) : null,
     endDate ? fmtLabel("Край", endDate) : null,
@@ -111,7 +113,7 @@ function buildMessageInternal(
       ? fmtLabel("Район на СО (ID)", String(attributes.SOFIADISTRICT))
       : null,
     attributes?.CONTACT
-      ? fmtLabel("Контакт", String(attributes.CONTACT))
+      ? fmtLabel("Контакт", attributes.CONTACT)
       : null,
   ].filter(Boolean);
 
@@ -126,7 +128,7 @@ function buildMessageInternal(
  * Build plain text message from feature attributes (used for notifications and text field)
  */
 export function buildPlainTextMessage(
-  attributes: Record<string, unknown> | undefined,
+  attributes: ArcGisAttributes | undefined,
   layer: { name: string },
   dateFormatter?: Intl.DateTimeFormat,
 ): string {
@@ -137,7 +139,7 @@ export function buildPlainTextMessage(
  * Build markdown message from feature attributes (used for markdownText field)
  */
 export function buildMarkdownMessage(
-  attributes: Record<string, unknown> | undefined,
+  attributes: ArcGisAttributes | undefined,
   layer: { name: string },
   dateFormatter?: Intl.DateTimeFormat,
 ): string {
