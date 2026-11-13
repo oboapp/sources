@@ -41,7 +41,7 @@ for missing or unparseable dates. Content cleanup runs on a cloned element and
 uses the same Markdown conventions as hybrid sources.
 
 Sources with different provider formats can supply `extractListing(page)`,
-`extractDetails(page)` and `parsePublicationDate(dateText)`. These optional hooks
+`extractDetails(page)` and `parsePublicationDate(dateText, post)`. These optional hooks
 replace their respective default conversions. Listing hooks return
 `BrowserPostLink[]` with `url`, `title` and `date`; detail hooks return
 `BrowserPostDetails` with `title`, `dateText` and `contentHtml`. Listing hooks
@@ -49,7 +49,14 @@ retain responsibility for provider-specific selection and cleanup rules. The
 helper applies its configured URL filter and deduplication to their results.
 Detail hooks retain responsibility for HTML cleanup; the helper still requires
 the returned title and content and converts the HTML to Markdown. A custom date
-parser receives the returned detail date text exactly as supplied.
+parser receives the returned detail date text exactly as supplied and the matching
+listing post, including its original title and date. Without prior discovery,
+the post contains the requested URL and empty title and date strings. Listing
+context stays inside the source instance and clears on rediscovery and close.
+
+An optional `filterPost(post)` can select listing candidates using their title
+and date. It runs after URL filtering and before deduplication. Discovery still
+returns identifiers only.
 
 The `browser` entrypoint also exports `parseBulgarianDate` for the default numeric
 date conversion and `parseBulgarianMonthDate` for dates such as `9 юни 2026`.

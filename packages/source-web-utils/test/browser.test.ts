@@ -8,6 +8,7 @@ import {
   createBrowserSource,
   parseBulgarianDate,
   parseBulgarianMonthDate,
+  type BrowserPostLink,
   type BrowserSourceOptions,
 } from "../dist/esm/browser.js";
 
@@ -136,6 +137,72 @@ test("empty listing returns no candidates and still closes and paces the index r
   assert.equal(fixture.delay.mock.callCount(), 1);
   await source.close?.();
   assert.equal(fixture.closeBrowser.mock.callCount(), 1);
+});
+
+test("listing filters and date parsers retain the last duplicate's original metadata", async () => {
+  const fixture = browserFixture();
+  const posts = [
+    { url: identifier, title: "First title", date: "First date" },
+    { url: "https://example.com/outdated", title: "Outdated", date: "2000" },
+    { url: identifier, title: "Last title", date: "Listing fallback" },
+  ];
+  const parsePublicationDate = mock.fn((dateText: string, post: BrowserPostLink) => {
+    assert.equal(dateText, "09.06.2026");
+    assert.deepEqual(post, posts[2]);
+    return "2026-06-09T00:00:00.000Z";
+  });
+  const source = createBrowserSource({
+    ...options,
+    dedupe: "last",
+    async extractListing() {
+      return posts;
+    },
+    filterPost(post) {
+      return post.date !== "2000";
+    },
+    parsePublicationDate,
+  }, fixture);
+  try {
+    assert.deepEqual(await source.discoverItems(), { items: [{ identifier }] });
+    assert.equal((await source.fetchItem({ identifier })).datePublished, "2026-06-09T00:00:00.000Z");
+    assert.equal(parsePublicationDate.mock.callCount(), 1);
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("rediscovery and close clear listing context and undiscovered details receive empty metadata", async () => {
+  const fixture = browserFixture();
+  let posts = [{ url: identifier, title: "Listing title", date: "Listing date" }];
+  const parsePublicationDate = mock.fn((_dateText: string, post: BrowserPostLink) => {
+    return post.date || "2026-06-09T00:00:00.000Z";
+  });
+  const source = createBrowserSource({
+    ...options,
+    async extractListing() {
+      return posts;
+    },
+    parsePublicationDate,
+  }, fixture);
+  const emptyPost = { url: identifier, title: "", date: "" };
+  try {
+    await source.fetchItem({ identifier });
+    assert.deepEqual(parsePublicationDate.mock.calls.at(-1)?.arguments[1], emptyPost);
+    await source.discoverItems();
+    await source.fetchItem({ identifier });
+    assert.deepEqual(parsePublicationDate.mock.calls.at(-1)?.arguments[1], posts[0]);
+    posts = [];
+    await source.discoverItems();
+    await source.fetchItem({ identifier });
+    assert.deepEqual(parsePublicationDate.mock.calls.at(-1)?.arguments[1], emptyPost);
+    posts = [{ url: identifier, title: "New listing title", date: "New listing date" }];
+    await source.discoverItems();
+    await source.close?.();
+    await source.fetchItem({ identifier });
+    assert.deepEqual(parsePublicationDate.mock.calls.at(-1)?.arguments[1], emptyPost);
+  } finally {
+    await source.close?.();
+  }
 });
 
 test("HTTP listing errors fail before extraction and retain page cleanup and pacing", async () => {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- Add optional listing-post filtering and pass the matching listing metadata to
+  publication-date parsers, preserving source-specific date fallback rules.
+- Keep listing context inside each source instance and clear it on rediscovery
+  and close. Discovery items retain their literal identifiers.
+
 ## 0.3.1
 
 - Reject unsuccessful browser navigation responses before listing or detail
