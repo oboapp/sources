@@ -89,7 +89,7 @@ export function createNimhSource(dependencies: NimhDependencies): DataSource {
     },
     async fetchItem(item) {
       assertOpen();
-      if (!cached || cached.identifier !== item.identifier) {
+      if (cached?.identifier !== item.identifier) {
         throw new Error(`Missing NIMH listing content for ${item.identifier}`);
       }
       return buildContent(cached.data);
