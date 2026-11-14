@@ -10,7 +10,15 @@ Export a `CreateSource` factory from the source package's runtime entrypoint and
 
 Identifiers are the exact historical URLs or synthetic URLs. Do not normalize spelling, encoding, query order, case, or trailing slashes. `observedAt` is informational; it does not request a refresh. Existing identifiers are never refetched because of provider revisions or package upgrades.
 
-Sources do not receive a database interface. Obo owns historical base64 and MD5 lookups, deduplication, validation, and raw document persistence. Pagination is in memory for the current scan; no durable queue, checkpoints, or worker leases are required The platform derives the raw URL from the identifier and supplies sourceType, locality, crawledAt, and processing state. Dates in source content cross the package boundary as strings; Obo validates and converts them to its existing persistence representation. GeoJSON is JSON data (including legacy serialized strings); Obo validates it with its existing geometry validator before persistence. The SDK does not replace that validation or define a second GeoJSON schema.
+Sources do not receive a database interface. Obo owns historical base64 and MD5 lookups, deduplication, validation, and raw document persistence. Pagination is in memory for the current scan; no durable queue, checkpoints, or worker leases are required. The platform derives the raw URL from the identifier and supplies sourceType, locality, crawledAt, and processing state. Dates in source content cross the package boundary as strings; Obo validates and converts them to its existing persistence representation. GeoJSON is JSON data (including legacy serialized strings); Obo validates it with its existing geometry validator before persistence. The SDK does not replace that validation or define a second GeoJSON schema.
+
+`SourceContent.cityWide` is an optional boolean. Set it to `true` when a notice
+applies to the entire platform-selected locality, such as a city-wide weather
+warning. Sources may explicitly return `false` or omit the field. Obo must
+preserve and validate this field before persistence and pass it to ingestion.
+Consumers need runner support for the field before integrating a source that
+depends on city-wide behavior. NIMH's existing empty GeoJSON FeatureCollection
+remains valid alongside `cityWide: true`.
 
 ## Discovery payload bounds
 
@@ -20,6 +28,6 @@ Invalid or oversized context fails that item explicitly. Never silently truncate
 
 ## Compatibility and release
 
-Both ESM and CommonJS imports are supported with matching type declarations, including the older `node` module resolution used by Obo's production compiler. The metadata subpath has no runtime dependencies. This initial 0.1 contract is a foundation; it does not implement durable orchestration or migrate a source.
+Both ESM and CommonJS imports are supported with matching type declarations, including the older `node` module resolution used by Obo's production compiler. The metadata subpath has no runtime dependencies. Version 0.2 adds optional city-wide scope to the existing discovery and fetch contract.
 
 Each package owns its version and release notes. Breaking contract changes require explicit consumer migration; never use package updates to change persisted identity. Build and test with `pnpm check` at the repository root. Run `pnpm --dir packages/source-sdk pack` to build a publishable tarball including the inherited LICENSE. Inspect the tarball before manual npm publication. Consumers must pin released package versions in their lockfile; Obo integration starts after publication, not via a private Git checkout dependency.

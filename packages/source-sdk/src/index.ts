@@ -30,6 +30,8 @@ export interface SourceContent {
   readonly geoJson?: JsonValue;
   readonly categories?: readonly string[];
   readonly isRelevant?: boolean;
+  /** True when the content applies to the entire platform-selected locality. */
+  readonly cityWide?: boolean;
   /** Empty string intentionally disables the public detail link. */
   readonly deepLinkUrl?: string;
 }

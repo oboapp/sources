@@ -1,6 +1,13 @@
 # @oboapp/source-sdk
 
-## 0.1.1 (unreleased)
+## 0.2.0 (unreleased)
+
+- Add optional boolean `cityWide` content for notices applying to the entire
+  platform-selected locality, including NIMH weather warnings.
+- Cover optional scope, boolean values and readonly typing in ESM, CommonJS and
+  Obo's production TypeScript resolution.
+
+## 0.1.1 (2026-10-19)
 
 - Add declaration fallbacks for Obo's production TypeScript `moduleResolution: node`, including the metadata subpath.
 - Test a consumer outside the SDK package with the production compiler settings.
