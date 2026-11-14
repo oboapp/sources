@@ -21,11 +21,19 @@ test("resolves root and metadata declarations with Obo's production compiler set
     await mkdir(scope, { recursive: true });
     await symlink(packageRoot, join(scope, "source-sdk"), "junction");
     await writeFile(join(fixture, "consumer.ts"), `
-      import { serializeDiscoveryPayload } from "@oboapp/source-sdk";
+      import { serializeDiscoveryPayload, type SourceContent } from "@oboapp/source-sdk";
       import type { SourceMetadata } from "@oboapp/source-sdk/metadata";
       const metadata: SourceMetadata = { id: "example", name: "Example", url: "https://example.com", localities: ["bg.sofia"] };
       const encoded: string = serializeDiscoveryPayload(metadata.id);
+      const content: SourceContent = {
+        title: "Weather warning",
+        message: "Strong wind",
+        datePublished: "2026-11-14T00:00:00Z",
+        cityWide: true,
+      };
+      const cityWide: boolean | undefined = content.cityWide;
       void encoded;
+      void cityWide;
     `);
     const require = createRequire(import.meta.url);
     assert.doesNotThrow(() => execFileSync(process.execPath, [
