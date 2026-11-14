@@ -14,6 +14,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | --- | --- |
 | [`@oboapp/source-sdk`](packages/source-sdk) | Source contracts, isolated catalog metadata types, and discovery payload validation |
 | [`@oboapp/source-nimh-severe-weather`](packages/source-nimh-severe-weather) | City-wide NIMH weather warnings with legacy browser-serialized identifiers |
+| [`@oboapp/source-erm-zapad`](packages/source-erm-zapad) | Electricity interruptions with globally deduplicated incident centers from ERM Zapad |
 | [`@oboapp/source-web-utils`](packages/source-web-utils) | Shared RSS parsing, browser listing and detail collection |
 | [`@oboapp/source-inspectorat-so-org`](packages/source-inspectorat-so-org) | Browser listing and webpage content for Sofia Inspectorate |
 | [`@oboapp/source-triaditsa-org`](packages/source-triaditsa-org) | Full-content RSS source for Sofia district Triaditsa |
