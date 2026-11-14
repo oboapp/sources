@@ -8,7 +8,7 @@ Update the affected package's version and changelog in a reviewed PR. Use SemVer
 
 Run `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm test:coverage`, and the package's `pnpm pack` command. Inspect available CI and Sonar findings and the actual quality gate before merge. See [SONAR.md](SONAR.md) for coverage mapping, project setup and eligible PR analysis. Report unavailable Sonar results explicitly while account setup or analysis is pending.
 
-Merge the PR after the applicable checks pass. Publication is a separate action under the user's release authorization. Reuse authorization already given in the session. Confirm npm account/scope access before the first release of a package. Keep credentials outside this repository.
+Merge the PR after the applicable checks pass. The agent verifies the merged commit, creates its package tag and GitHub release, attaches the inspected npm tarball, and gives the user exact publication commands. The user publishes to npm using their own account. The agent then verifies the registry and integrates the published version in the fork. Reuse authorization already given in the session. Keep credentials outside this repository; the agent must not request npm credentials, require a separate login step, or ask again for an already authorized release action.
 
 Persisted source IDs and identifiers remain compatibility boundaries across package versions. Updating a package does not authorize refetching existing identifiers or changing historical records.
 
@@ -20,7 +20,7 @@ The examples below use PowerShell 7.3 or later from the repository root. The pre
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $true
 
-$packageDirectory = 'source-toplo-bg'
+$packageDirectory = 'source-sofiyska-voda'
 $releaseCommit = '<full merged main commit SHA>'
 
 git status --short
@@ -60,28 +60,80 @@ Inspect the archive before publishing. Confirm its name and version, ESM/CommonJ
 
 An ignored dependency build-script warning can occur under pnpm 10. Run `pnpm check` to verify the installed tools. If a tool actually fails because its build script was blocked, review and approve only that dependency with `pnpm approve-builds`. Any resulting repository policy change belongs in a reviewed PR; rebuild the release from its merged commit.
 
-## 3. Publish the inspected tarball
+## 3. Create and verify the GitHub release with its npm tarball
 
-Authenticate with the npm account that has publishing access to the package. Check that the `@oboapp` registry setting is unset or points to the public npm registry. Resolve a different scoped registry override before publishing.
+The agent completes this step before handing npm publication to the user. Use `<package-directory>-v<version>` for each package's tag. First inspect any existing release records:
 
 ```powershell
-npm config get '@oboapp:registry'
-npm whoami --registry=https://registry.npmjs.org
+if (git tag --list $releaseTag) {
+  git rev-list -n 1 $releaseTag
+}
+git ls-remote --tags origin "refs/tags/$releaseTag" "refs/tags/$releaseTag^{}"
+gh release list --repo oboapp/sources
 ```
 
-If `npm whoami` fails or reports the wrong account, run `npm login --registry=https://registry.npmjs.org` and retry it. If this version may already have been published, use the read-only checks in step 4 before attempting publication.
+Compare any local tag target and remote tag's peeled commit with `$releaseCommit`. If the matching tag exists only locally, resume with `git push` and then create the missing GitHub release. If the matching tag is already remote, create only the missing GitHub release. Resolve mismatches before continuing and preserve existing published tags.
 
-Publish the exact archive inspected above to the public npm registry. The explicit `./` prefix identifies a local tarball path.
+Calculate the inspected archive's npm integrity value and include it in the handoff:
 
 ```powershell
+$tarballBytes = [System.IO.File]::ReadAllBytes((Resolve-Path -LiteralPath $tarballPath).Path)
+$sha512 = [System.Security.Cryptography.SHA512]::Create()
+try {
+  $localIntegrity = 'sha512-' + [Convert]::ToBase64String($sha512.ComputeHash($tarballBytes))
+} finally {
+  $sha512.Dispose()
+}
+```
+
+For a release with neither a tag nor a GitHub release:
+
+```powershell
+git tag -a $releaseTag $releaseCommit -m "Release $packageName@$packageVersion"
+git push origin $releaseTag
+gh release create $releaseTag $tarballPath --repo oboapp/sources --verify-tag --title "$packageName@$packageVersion" --notes "Release $packageName@$packageVersion from $releaseCommit. npm publication is pending the user's manual publish step. Publish the attached tarball. Expected npm dist.integrity: $localIntegrity. See $packagePath/CHANGELOG.md at this tag."
+```
+
+For an existing matching GitHub release, attach the inspected archive with `gh release upload $releaseTag $tarballPath --repo oboapp/sources` if that asset is missing. Preserve existing assets; inspect a matching asset before reusing it.
+
+Verify the remote tag points to `$releaseCommit`, the GitHub release references that tag, and its npm `.tgz` asset matches the inspected archive byte for byte. Download the asset into a new temporary directory and compare its SHA-512 integrity with `$localIntegrity`. Record the merged PR, exact-commit CI and quality-gate results, tag, release URL, asset URL and integrity value. State that npm publication is pending until step 5 succeeds.
+
+## 4. Hand the verified tarball to the user for npm publication
+
+The agent gives the user a self-contained command block with the exact package version, attached asset URL, local archive path and expected integrity value. The user downloads that verified npm archive and publishes it with their existing npm access. The user completes any authentication or two-factor prompts raised by npm. A separate agent-requested login or credential-sharing step is unnecessary.
+
+The handoff should use the attached package asset, so the user can publish without cloning, rebuilding or repacking the repository. For example, the [Sofiyska Voda 0.1.0 release](https://github.com/oboapp/sources/releases/tag/source-sofiyska-voda-v0.1.0) provides this verified archive. From the user's chosen download directory:
+
+```powershell
+$ErrorActionPreference = 'Stop'
+$PSNativeCommandUseErrorActionPreference = $true
+$packageName = '@oboapp/source-sofiyska-voda'
+$packageVersion = '0.1.0'
+$tarballPath = Join-Path (Get-Location) 'oboapp-source-sofiyska-voda-0.1.0.tgz'
+Invoke-WebRequest -Uri 'https://github.com/oboapp/sources/releases/download/source-sofiyska-voda-v0.1.0/oboapp-source-sofiyska-voda-0.1.0.tgz' -OutFile $tarballPath
+
+$expectedIntegrity = 'sha512-BNKxX8xNPMcH3azEs4tQUd37900wLTW+iLRSEwnv46Ns1EaLlx7IKWv/OhFRvua6Q0y3QYxqR5oQSMoB6Ajm/g=='
+$tarballBytes = [System.IO.File]::ReadAllBytes($tarballPath)
+$sha512 = [System.Security.Cryptography.SHA512]::Create()
+try {
+  $downloadedIntegrity = 'sha512-' + [Convert]::ToBase64String($sha512.ComputeHash($tarballBytes))
+} finally {
+  $sha512.Dispose()
+}
+if ($downloadedIntegrity -ne $expectedIntegrity) {
+  throw 'Downloaded tarball integrity differs from the verified release asset.'
+}
+
 npm publish $tarballPath --access public --registry=https://registry.npmjs.org
 ```
 
-Complete any browser, two-factor authentication, or staged-approval prompts from npm. Confirm publication succeeded before proceeding. Publish one selected package at a time. Keep publication manual until a separately reviewed automation preserves the same package selection and verification steps.
+For each release, substitute its own verified values before giving the commands to the user. Check that any scoped registry override agrees with the public registry. If the version may already exist or a publish attempt has an uncertain result, use the read-only registry checks in step 5 before another publication attempt. Publish one selected package at a time.
 
-## 4. Verify npm before tagging
+The agent resumes registry verification after the user reports publication. Keep npm publication manual until a separately reviewed workflow changes these responsibilities.
 
-Check both the package index and the selected version through the public npm registry:
+## 5. Verify the user-published package on npm
+
+After the user publishes, the agent checks both the package index and the selected version through the public npm registry. Use the package name, version and verified archive from the handoff:
 
 ```powershell
 npm view $packageName dist-tags versions --json --prefer-online --registry=https://registry.npmjs.org
@@ -103,14 +155,14 @@ try {
 }
 $registryIntegrity = npm view "$packageName@$packageVersion" dist.integrity --prefer-online --registry=https://registry.npmjs.org
 if ($LASTEXITCODE -ne 0) {
-  throw 'Registry verification failed. Resolve it before tagging.'
+  throw 'Registry verification failed. Resolve it before integration.'
 }
 if ($localIntegrity -ne $registryIntegrity.Trim()) {
   throw 'Published tarball integrity differs from the inspected local archive.'
 }
 ```
 
-Record the version and integrity value. Open the package's npm page and check its README and repository link.
+Record the merged PR, exact-commit CI and quality gate, npm version, verified integrity, tag and GitHub release URL. Open the package's npm page and check its README and repository link. The release is complete when the tag and GitHub release are verified and npm publication passes the registry, README and integrity checks.
 
 ### Registry propagation and partial failures
 
@@ -120,37 +172,13 @@ That publication also showed a `0.0.0-stage` entry alongside `0.1.0`. Inspect th
 
 If publishing times out or returns an uncertain result, check whether the exact version exists before retrying. Once a name/version is published, it is immutable. Preserve the existing release while diagnosing registry or website problems. A genuine package-content correction needs a reviewed version increment. See [npm publish](https://docs.npmjs.com/cli/v11/commands/npm-publish/).
 
-If tag creation or GitHub release creation fails after successful npm publication, resume those recording steps. Compare existing tags/releases with the intended commit and version before creating them. Existing release records must keep their original commit.
-
-## 5. Tag the released commit and create its GitHub release
-
-Use `<package-directory>-v<version>` for each package's tag. First inspect any existing release records:
-
-```powershell
-if (git tag --list $releaseTag) {
-  git rev-list -n 1 $releaseTag
-}
-git ls-remote --tags origin "refs/tags/$releaseTag" "refs/tags/$releaseTag^{}"
-gh release list --repo oboapp/sources
-```
-
-Compare any local tag target and remote tag's peeled commit with `$releaseCommit`. If the matching tag exists only locally, resume with `git push` and then create the missing GitHub release. If the matching tag is already remote, create only the missing GitHub release. Resolve mismatches before continuing and preserve existing published tags.
-
-For a release with neither a tag nor a GitHub release:
-
-```powershell
-git tag -a $releaseTag $releaseCommit -m "Release $packageName@$packageVersion"
-git push origin $releaseTag
-gh release create $releaseTag --repo oboapp/sources --verify-tag --title "$packageName@$packageVersion" --notes "Release $packageName@$packageVersion from $releaseCommit. See $packagePath/CHANGELOG.md at this tag."
-```
-
-Record the merged PR, CI result, published npm version, integrity, tag, and GitHub release URL in the handoff. A release is complete when registry verification and both release records succeed.
+If tag creation, release creation or asset upload fails, resume the missing part of step 3 before the user publishes. If npm publication fails or remains pending after the GitHub release exists, preserve that tag, release and verified archive. Compare registry state before retrying publication. Existing release records must keep their original commit.
 
 ## 6. Integrate the published version in Obo
 
-Use a separate reviewed Obo integration PR. Pin the exact published version with `pnpm add --save-exact`, commit the lockfile, and run Obo's required quality checks and package-to-ingestion contracts before switching the selected source.
+Start with a separate reviewed integration PR in [vbuch/oboapp](https://github.com/vbuch/oboapp). Pin the exact verified npm version with `pnpm add --save-exact`, commit the lockfile, and run the fork's required quality checks and package-to-ingestion contracts before switching the selected source. Validate the fork's CI and production deployment before backporting generic changes to [oboapp/oboapp](https://github.com/oboapp/oboapp). Preserve each instance's selected catalog, jobs and deployment settings.
 
-For example, from the Obo repository root:
+For example, from the fork repository root:
 
 ```powershell
 pnpm --dir ingest add --save-exact "$packageName@$packageVersion"
