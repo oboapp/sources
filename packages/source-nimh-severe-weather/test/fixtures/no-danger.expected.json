@@ -1,0 +1,27 @@
+{
+  "parsed": {
+    "forecastDate": "2026-11-15",
+    "issuedAt": "2026-11-09T17:33:22",
+    "recommendation": "Няма опасност",
+    "sofiaWarnings": []
+  },
+  "hasActiveWarnings": false,
+  "identifier": "https://weather.bg/obshtini/index.php?z=u&o=SOF&date=2026-11-15&h=4f53cda18c2b",
+  "content": {
+    "title": "Предупреждение за опасно време - 15 ноември 2026",
+    "datePublished": "2026-11-09T17:33:22",
+    "message": "Няма опасност",
+    "markdownText": "Няма опасност",
+    "geoJson": {
+      "type": "FeatureCollection",
+      "features": []
+    },
+    "categories": [
+      "weather"
+    ],
+    "isRelevant": true,
+    "cityWide": true,
+    "timespanStart": "2026-11-14T22:00:00.000Z",
+    "timespanEnd": "2026-11-15T21:59:59.000Z"
+  }
+}

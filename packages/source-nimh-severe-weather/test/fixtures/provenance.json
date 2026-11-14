@@ -1,0 +1,20 @@
+{
+  "legacyRepository": "vbuch/oboapp",
+  "legacyCommit": "b485404039dab572133667d38e8d5b2c94f78968",
+  "expectedOutputMethod": "Parsed and built with the independently retained legacy parser/builders in vbuch/oboapp; no new source-package implementation was imported.",
+  "noDanger": {
+    "providerUrl": "https://weather.bg/obshtini/index.php?z=u&o=SOF",
+    "capturedAt": "2026-11-14T10:33:33.8475109Z",
+    "transport": "Public HTTP GET, then serialized through an ephemeral headless system Chrome context with external requests blocked.",
+    "originalByteLength": 809243,
+    "fixtureDerivation": "Retains captured forecast marker, issue marker, recommendation and exact Sofia table row. The complete parsed data, identifier and built content were deep-compared with the original full browser-serialized response."
+  },
+  "activeEntities": {
+    "origin": "Synthetic active-warning fixture, not a captured provider warning.",
+    "input": "active-entities-input.html",
+    "browserSerialized": "active-entities.html",
+    "purpose": "Shows the legacy browser serialization identity boundary for named and numeric degree/Bulgarian entities and NBSP before parser semicolon splitting.",
+    "rawHtmlIdentifier": "https://weather.bg/obshtini/index.php?z=u&o=SOF&date=2026-02-01&h=1662e0b8e108",
+    "browserHtmlIdentifier": "https://weather.bg/obshtini/index.php?z=u&o=SOF&date=2026-02-01&h=4af6312bda0b"
+  }
+}
