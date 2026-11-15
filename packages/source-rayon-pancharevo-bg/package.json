@@ -1,6 +1,6 @@
 {
   "name": "@oboapp/source-rayon-pancharevo-bg",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Webpage source for Sofia district Pancharevo",
   "main": "./dist/cjs/index.js",
   "scripts": {

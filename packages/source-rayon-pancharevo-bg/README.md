@@ -1,6 +1,6 @@
 # @oboapp/source-rayon-pancharevo-bg
 
-Collects the infrastructure and repair listing from Sofia district Pancharevo. The package preserves the `rayon-pancharevo-bg` identity, literal article URLs, Bulgarian date filtering and cleaned Markdown content.
+Collects the planned-repairs RSS feed and article pages from Sofia district Pancharevo. The package preserves the `rayon-pancharevo-bg` identity, literal article URLs, Bulgarian event-date filtering and cleaned Markdown content.
 
 ## Use
 
@@ -17,14 +17,16 @@ Pass the runtime factory and browser-safe metadata to Obo's source runner. Direc
 
 ## Compatibility
 
-Discovery retains the legacy infrastructure-path filter and excludes URLs with a `start` query parameter. Percent encoding, query strings and fragments remain part of the identifier. The legacy filter accepts matching paths regardless of hostname. Discovery uses the listing date text followed by its title to find a Bulgarian date or range. A recognized range must contain today's local calendar date. Missing and invalid dates remain eligible. This preserves the current treatment of future listings.
+Discovery reads the first page of the [advertised RSS feed](https://www.pancharevo.org/gradska-i-okolna-sreda/planovi-remonti?format=feed&type=rss). It accepts the current planned-repairs article paths and legacy infrastructure paths, excludes URLs with a `start` query parameter, and removes duplicate URLs. Percent encoding, query strings and fragments remain part of the identifier.
 
-Detail dates come from the first matching date element, then the title, then the first article paragraph. Numeric dates, two-digit years, month names and same-month or cross-month ranges use the existing local-midnight parsing rules. The publication date is the range's start. Unrecognized date text uses the current time; invalid recognized dates fail the item.
+The legacy Bulgarian event-date filter now reads titles, because the feed descriptions are empty or image-only. A recognized event date or range must contain today's local calendar date. Missing and invalid title dates remain eligible. Feed publication dates describe when an article was published and are excluded from this event-date test. Articles can contain event dates absent from their titles; Obo's ingestion pipeline still evaluates their full content.
 
-One Chromium session handles the scan. Listing and detail requests close their pages and wait two seconds, including failed requests. Image, media and font requests are blocked. The runtime requires Node.js 20.3 or later and the Chromium revision matching the Playwright version declared by `@oboapp/source-web-utils`.
+Current articles use the scoped `.article-body` content and the article's `time[datetime]` publication timestamp. The provider's RSS publication timestamps can contain an extra timezone offset, so the article timestamp is authoritative. Missing or invalid current article timestamps fail the item. Historical Joomla pages retain the existing paragraph/title date fallbacks and local-midnight parsing rules.
 
-Obo owns historical lookups, persistence, scheduling, ingestion and notifications. Existing identifiers remain unchanged when this package is updated.
+Chromium starts only when an article needs fetching, and one session handles those requests. Article requests close their pages. Feed and article attempts wait two seconds, including failures. HTTP error responses fail collection. Image, media and font requests are blocked. The runtime requires Node.js 20.3 or later and the Chromium revision matching the Playwright version declared by `@oboapp/source-web-utils`.
+
+Obo owns historical lookups, persistence, scheduling, ingestion and notifications. Existing identifiers remain unchanged when this package is updated. The provider changed article paths and some internal numeric IDs during its site migration. The package does not infer aliases between old and new URLs. Before production cutover, review candidate identifiers against historical records and verify discovery and deduplication from the deployment environment. Keep historical backfill separate.
 
 ## Tests and release
 
-Offline DOM fixtures cover literal URL spelling, pagination filtering, calendar-date relevance, publication date fallbacks, HTML cleanup, Markdown output, retry/session cleanup and isolated metadata exports. Run `pnpm check` from the repository root and follow [RELEASING.md](../../RELEASING.md) for release checks and publication.
+Offline feed and DOM fixtures cover current discovery, literal URL spelling, calendar-date relevance, authoritative article publication dates, legacy date fallbacks, HTML cleanup, Markdown output, HTTP failures, retry/session cleanup and isolated metadata exports. Run `pnpm check` from the repository root and follow [RELEASING.md](../../RELEASING.md) for release checks and publication.

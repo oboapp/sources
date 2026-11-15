@@ -4,24 +4,34 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import { createSourceWithDependencies } from "../dist/esm/browser.js";
+import { createSourceWithDependencies, FEED_URL } from "../dist/esm/browser.js";
 import { extractDateCandidate, isDateRelevant, parseBulgarianDateOrRange, parsePancharevoDateToIso } from "../dist/esm/dates.js";
 import { createSource } from "../dist/esm/index.js";
 import { metadata } from "../dist/esm/metadata.js";
 import { browserFixture } from "./browser-fixture.js";
 
-const indexUrl = "https://www.pancharevo.org/%D1%80%D0%B5%D0%BC%D0%BE%D0%BD%D1%82%D0%B8-%D0%B8-%D0%B8%D0%BD%D1%84%D1%80%D0%B0%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D0%B0";
+const indexUrl = "https://www.pancharevo.org/gradska-i-okolna-sreda/planovi-remonti";
 const identifier = "https://www.pancharevo.org/%D1%80%D0%B5%D0%BC%D0%BE%D0%BD%D1%82%D0%B8-%D0%B8-%D0%B8%D0%BD%D1%84%D1%80%D0%B0%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D0%B0/2300-%D1%80%D0%B5%D0%BC%D0%BE%D0%BD%D1%82?x=1&y=2#notice";
+const modernIdentifier = `${indexUrl}/v-zmozni-sa-smusenia-na-elektrozahranvaneto-v-casti-ot-rajon-pancarevo`;
 const listingHtml = readFileSync(new URL("./fixtures/listing.html", import.meta.url), "utf8");
 const detailHtml = readFileSync(new URL("./fixtures/detail.html", import.meta.url), "utf8");
-const now = new Date("2026-11-13T12:00:00.000Z");
+const currentFeedXml = readFileSync(new URL("./fixtures/feed.xml", import.meta.url), "utf8");
+const modernDetailHtml = readFileSync(new URL("./fixtures/modern-detail.html", import.meta.url), "utf8");
+const now = new Date("2026-11-15T12:00:00.000Z");
 
 function freezeDate() {
   mock.timers.enable({ apis: ["Date"], now });
 }
 
-function card(url: string, title = "Ремонт", date = ""): string {
-  return `<article class="item"><h2 itemprop="name"><a href="${url}">${title}</a></h2><p>${date}</p></article>`;
+function feedItem(url: string, title = "Ремонт", date = "Thu, 05 Nov 2026 14:49:15 +0200"): string {
+  return `<item><title><![CDATA[${title}]]></title><link><![CDATA[${url}]]></link><pubDate>${date}</pubDate><description></description></item>`;
+}
+
+function mockFeed(items: string[], status = 200) {
+  return mock.method(globalThis, "fetch", async (input: Parameters<typeof fetch>[0]) => {
+    assert.equal(input, FEED_URL);
+    return new Response(`<rss><channel>${items.join("")}</channel></rss>`, { status });
+  });
 }
 
 afterEach(() => {
@@ -31,6 +41,7 @@ afterEach(() => {
 
 test("preserves literal identifiers and the legacy article content with one browser", async () => {
   freezeDate();
+  const fetchFeed = mockFeed([feedItem(identifier)]);
   const fixture = browserFixture(indexUrl, listingHtml, detailHtml);
   const source = createSourceWithDependencies(fixture);
   try {
@@ -41,10 +52,10 @@ test("preserves literal identifiers and the legacy article content with one brow
       message: "## Спиране на водоподаването\n\nНа 13 ноември (петък) 2026 г. ще се извърши ремонт.\n\n## Ремонт\n\nВода **няма да има**. [План](https://example.com/plan.pdf)\n\nЗапази това.",
     });
     assert.equal(fixture.launchBrowser.mock.callCount(), 1);
-    assert.equal(fixture.closePage.mock.callCount(), 2);
+    assert.equal(fetchFeed.mock.callCount(), 1);
+    assert.equal(fixture.closePage.mock.callCount(), 1);
     assert.equal(fixture.delay.mock.callCount(), 2);
-    assert.deepEqual(fixture.goto.mock.calls[0]?.arguments, [indexUrl, { waitUntil: "domcontentloaded" }]);
-    assert.deepEqual(fixture.goto.mock.calls[1]?.arguments, [identifier, { waitUntil: "domcontentloaded" }]);
+    assert.deepEqual(fixture.goto.mock.calls[0]?.arguments, [identifier, { waitUntil: "domcontentloaded" }]);
     assert.ok(fixture.document.querySelector("nav"));
   } finally {
     await source.close?.();
@@ -55,32 +66,37 @@ test("preserves literal identifiers and the legacy article content with one brow
 test("filters pagination and other paths while preserving matching paths on other hosts", async () => {
   freezeDate();
   const otherHost = identifier.replace("www.pancharevo.org", "example.com");
-  const fixture = browserFixture(indexUrl, [
-    card(identifier),
-    card(`${identifier.split("?")[0]}?start=4`),
-    card("https://www.pancharevo.org/contacts"),
-    card(otherHost),
-    card(identifier, ""),
-  ].join(""), detailHtml);
+  mockFeed([
+    feedItem(identifier),
+    feedItem(`${identifier.split("?")[0]}?start=4`),
+    feedItem("https://www.pancharevo.org/contacts"),
+    feedItem(otherHost),
+    feedItem(identifier, ""),
+    feedItem(identifier),
+  ]);
+  const fixture = browserFixture(indexUrl, listingHtml, detailHtml);
   const source = createSourceWithDependencies(fixture);
   try {
     assert.deepEqual((await source.discoverItems()).items, [{ identifier }, { identifier: otherHost }]);
+    assert.equal(fixture.launchBrowser.mock.callCount(), 0);
+    assert.equal(fixture.delay.mock.callCount(), 1);
   } finally {
     await source.close?.();
   }
 });
 
-test("keeps current ranges and unknown dates, and skips past and future listings", async () => {
+test("filters title event dates while ignoring feed publication dates", async () => {
   freezeDate();
-  const fixture = browserFixture(indexUrl, [
-    card(`${identifier}current`, "Ремонт", "12-14.11.2026"),
-    card(`${identifier}title`, "Ремонт 13.11.2026"),
-    card(`${identifier}past`, "Ремонт", "12.11.2026"),
-    card(`${identifier}future`, "Ремонт", "14.11.2026"),
-    card(`${identifier}unknown`),
-    card(`${identifier}invalid`, "Ремонт", "31.11.2026"),
-    card(`${identifier}badmonth`, "Ремонт", "13 несъществуващ 2026"),
-  ].join(""), detailHtml);
+  mockFeed([
+    feedItem(`${identifier}current`, "Ремонт 14-16.11.2026"),
+    feedItem(`${identifier}title`, "Ремонт 15.11.2026"),
+    feedItem(`${identifier}past`, "Ремонт 14.11.2026"),
+    feedItem(`${identifier}future`, "Ремонт 16.11.2026"),
+    feedItem(`${identifier}unknown`),
+    feedItem(`${identifier}invalid`, "Ремонт 31.11.2026"),
+    feedItem(`${identifier}badmonth`, "Ремонт 15 несъществуващ 2026"),
+  ]);
+  const fixture = browserFixture(indexUrl, listingHtml, detailHtml);
   const source = createSourceWithDependencies(fixture);
   try {
     assert.deepEqual((await source.discoverItems()).items, [
@@ -90,6 +106,162 @@ test("keeps current ranges and unknown dates, and skips past and future listings
       { identifier: `${identifier}invalid` },
       { identifier: `${identifier}badmonth` },
     ]);
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("discovers the current feed without backfilling its six past dated notices", async () => {
+  freezeDate();
+  mock.method(globalThis, "fetch", async () => {
+    return new Response(currentFeedXml);
+  });
+  const fixture = browserFixture(indexUrl, listingHtml, modernDetailHtml);
+  const source = createSourceWithDependencies(fixture);
+  const expected = {
+    items: [
+      { identifier: modernIdentifier },
+      { identifier: `${indexUrl}/poradi-profilaktika-na-v-zdusni-elektroprovodi-sa-v-zmozni-smusenia-na-elektrozahranvaneto-v-casti-ot-rajon-pancarevo` },
+      { identifier: `${indexUrl}/vremenno-zatrudnenie-na-dvizhenieto-v-s-bistritsa` },
+    ],
+  };
+  try {
+    assert.equal((currentFeedXml.match(/<item>/g) ?? []).length, 9);
+    assert.deepEqual(await source.discoverItems(), expected);
+    assert.deepEqual(await source.discoverItems(), expected);
+    assert.equal(fixture.launchBrowser.mock.callCount(), 0);
+    assert.equal(fixture.delay.mock.callCount(), 2);
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("uses the modern article publication datetime and cleans its body", async () => {
+  mockFeed([feedItem(modernIdentifier)]);
+  const discoveryFixture = browserFixture(indexUrl, listingHtml, modernDetailHtml);
+  const discoverySource = createSourceWithDependencies(discoveryFixture);
+  const page = await discoverySource.discoverItems();
+  const item = JSON.parse(JSON.stringify(page.items[0]));
+  await discoverySource.close?.();
+
+  const fixture = browserFixture(indexUrl, listingHtml, modernDetailHtml);
+  const source = createSourceWithDependencies(fixture);
+  try {
+    assert.deepEqual(await source.fetchItem(item), {
+      title: 'Възможни са смущения на електрозахранването в части от район "Панчарево"',
+      datePublished: "2026-11-05T14:49:15.000Z",
+      message: "ЕРМ Запад уведомява, че в периода **06-10.11.2026 г.** ще бъде извършена профилактика на въздушни електропроводи към ВЕЦ „Кокаляне“.\n\nВъзможни са смущения в селата Бистрица, Долни Пасарел, Герман, Лозен, Кокаляне и Панчарево.\n\n[Планирани прекъсвания](https://ermzapad.bg/bg/za-klienta/prekusvania/)",
+    });
+    assert.equal(fixture.closePage.mock.callCount(), 1);
+    assert.equal(fixture.delay.mock.callCount(), 1);
+    assert.ok(fixture.document.querySelector(".share-buttons"));
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("rejects failed feed HTTP responses and paces attempts without launching Chromium", async () => {
+  mockFeed([], 403);
+  const fixture = browserFixture(indexUrl, listingHtml, detailHtml);
+  const source = createSourceWithDependencies(fixture);
+  try {
+    await assert.rejects(source.discoverItems(), /RSS feed returned 403/);
+    assert.equal(fixture.launchBrowser.mock.callCount(), 0);
+    assert.equal(fixture.delay.mock.callCount(), 1);
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("rejects feed network failures and preserves the original cause", async () => {
+  const cause = new Error("Connection reset");
+  const failure = new TypeError("fetch failed", { cause });
+  mock.method(globalThis, "fetch", async () => {
+    throw failure;
+  });
+  const fixture = browserFixture(indexUrl, listingHtml, detailHtml);
+  const source = createSourceWithDependencies(fixture);
+  try {
+    await assert.rejects(source.discoverItems(), (error) => {
+      assert.equal(error, failure);
+      return true;
+    });
+    assert.equal(fixture.delay.mock.callCount(), 1);
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("rejects article HTTP errors and paces a successful retry", async () => {
+  const fixture = browserFixture(indexUrl, listingHtml, modernDetailHtml);
+  fixture.setResponseStatus(404);
+  const source = createSourceWithDependencies(fixture);
+  try {
+    await assert.rejects(source.fetchItem({ identifier: modernIdentifier }), /HTTP 404/);
+    fixture.setResponseStatus(200);
+    assert.equal((await source.fetchItem({ identifier: modernIdentifier })).datePublished, "2026-11-05T14:49:15.000Z");
+    assert.equal(fixture.launchBrowser.mock.callCount(), 1);
+    assert.equal(fixture.closePage.mock.callCount(), 2);
+    assert.equal(fixture.delay.mock.callCount(), 2);
+  } finally {
+    await source.close?.();
+  }
+  assert.equal(fixture.closeBrowser.mock.callCount(), 1);
+});
+
+test("rejects a missing modern article body even when the page has other content", async () => {
+  const fixture = browserFixture(indexUrl, listingHtml, `<main><article id="article_view_news"><h1 class="article-title">Ремонт</h1><time datetime="2026-11-05T16:49:15+02:00">05 Ноември 2026</time></article><nav>Навигация</nav><p>Други новини</p></main>`);
+  const source = createSourceWithDependencies(fixture);
+  try {
+    await assert.rejects(source.fetchItem({ identifier: modernIdentifier }), /content/i);
+    assert.equal(fixture.closePage.mock.callCount(), 1);
+    assert.equal(fixture.delay.mock.callCount(), 1);
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("rejects missing or invalid modern publication datetimes without using event dates", async () => {
+  const fixture = browserFixture(indexUrl, listingHtml, modernDetailHtml.replace(' datetime="2026-11-05T16:49:15+02:00"', ""));
+  const source = createSourceWithDependencies(fixture);
+  try {
+    await assert.rejects(source.fetchItem({ identifier: modernIdentifier }), /publication datetime/i);
+    const invalidDatetimes = [
+      "invalid",
+      "2026-11-05",
+      "11/05/2026",
+      "2026-11-05T16:49:15",
+      "2026-02-30T16:49:15+02:00",
+    ];
+    for (const datetime of invalidDatetimes) {
+      fixture.setDetailHtml(modernDetailHtml.replace("2026-11-05T16:49:15+02:00", datetime));
+      await assert.rejects(source.fetchItem({ identifier: modernIdentifier }), /publication datetime/i, datetime);
+    }
+    assert.equal(fixture.closePage.mock.callCount(), invalidDatetimes.length + 1);
+    assert.equal(fixture.delay.mock.callCount(), invalidDatetimes.length + 1);
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("accepts a leap-day publication timestamp with fractional seconds and an offset", async () => {
+  const fixture = browserFixture(indexUrl, listingHtml, modernDetailHtml.replace("2026-11-05T16:49:15+02:00", "2024-02-29T00:15:30.123+02:00"));
+  const source = createSourceWithDependencies(fixture);
+  try {
+    const content = await source.fetchItem({ identifier: modernIdentifier });
+    assert.equal(content.datePublished, "2024-02-28T22:15:30.123Z");
+  } finally {
+    await source.close?.();
+  }
+});
+
+test("rejects a missing modern article title instead of using the site header", async () => {
+  const fixture = browserFixture(indexUrl, listingHtml, modernDetailHtml.replace(/<h1 class="article-title">[\s\S]*?<\/h1>/, ""));
+  const source = createSourceWithDependencies(fixture);
+  try {
+    await assert.rejects(source.fetchItem({ identifier: modernIdentifier }), /title/i);
+    assert.equal(fixture.closePage.mock.callCount(), 1);
+    assert.equal(fixture.delay.mock.callCount(), 1);
   } finally {
     await source.close?.();
   }
