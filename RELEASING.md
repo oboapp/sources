@@ -15,13 +15,15 @@ Follow dependency order for a migration that needs shared helper changes:
 
 Prepare local code and tests while a dependency release is pending. Open dependent PRs at the stages above. Keep each independently deliverable change in a focused PR. npm publication stays manual.
 
+The agent prepares focused PRs, runs independent subagent reviews, addresses actionable findings and existing review comments, and reruns the affected checks. The user performs the final review and merges. Apply this workflow to later source migration items.
+
 ## 1. Prepare the release PR
 
 Update the affected package's version and changelog in a reviewed PR. Use SemVer: patch for compatible fixes, minor for compatible additions, and an explicit breaking version for contract changes (a minor increment during 0.x). Use `pnpm add` or `pnpm remove` for dependency changes.
 
 Run `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm test:coverage`, and the package's `pnpm pack` command. Inspect available CI and Sonar findings and the actual quality gate before merge. See [SONAR.md](SONAR.md) for coverage mapping, project setup and eligible PR analysis. Report unavailable Sonar results explicitly while account setup or analysis is pending.
 
-Merge the PR after the applicable checks pass. Persisted source IDs and identifiers remain compatibility boundaries across package versions. Updating a package does not authorize refetching existing identifiers or changing historical records.
+The user reviews and merges the PR after the applicable checks pass. Persisted source IDs and identifiers remain compatibility boundaries across package versions. Updating a package does not authorize refetching existing identifiers or changing historical records.
 
 ## 2. Prepare the archive from the exact merged commit
 
@@ -120,7 +122,7 @@ If a step fails, resume only the missing step after inspecting the current recor
 
 ## 4. The user downloads, verifies and publishes to npm
 
-The user downloads the `.tgz` and its `.tgz.sha512` file from the GitHub release. Publish that downloaded archive so the registry receives the same bytes that were reviewed and handed off. Confirm npm account and scope access before the first release of a package.
+The user downloads the `.tgz` and its `.tgz.sha512` file from the GitHub release. Publish that downloaded archive so the registry receives the same bytes that were reviewed and handed off. The user uses their own npm account and completes any authentication prompts raised by npm. The agent must not request npm credentials or require a separate login step.
 
 The user can download both assets with GitHub CLI into a new directory:
 
@@ -139,7 +141,7 @@ gh release download $releaseTag --repo oboapp/sources --pattern $tarballName --p
 $tarballPath = Join-Path $downloadDirectory $tarballName
 ```
 
-For a browser download, set `$tarballPath` to the downloaded archive's absolute path. Keep the matching checksum file beside it. Verify the downloaded archive and check npm access:
+For a browser download, set `$tarballPath` to the downloaded archive's absolute path. Keep the matching checksum file beside it. Verify the downloaded archive and check the scoped registry:
 
 ```powershell
 $ErrorActionPreference = 'Stop'
@@ -157,10 +159,9 @@ if ($downloadedHash -ne $checksumFields[0]) {
 }
 
 npm config get '@oboapp:registry'
-npm whoami --registry=https://registry.npmjs.org
 ```
 
-The scope registry must be unset or point to `https://registry.npmjs.org`. Resolve a different scope override before publishing. If `npm whoami` fails or reports the wrong account, run `npm login --registry=https://registry.npmjs.org` and retry it. Confirm the reported account has publishing access to the selected package.
+The scope registry must be unset or point to `https://registry.npmjs.org`. Resolve a different scope override before publishing.
 
 If this name/version may already be published, perform the read-only registry checks in step 5 before attempting publication. Otherwise, publish the verified downloaded archive:
 
@@ -221,4 +222,4 @@ For example, from the Obo repository root:
 pnpm --dir ingest add --save-exact "${packageName}@${packageVersion}"
 ```
 
-Keep existing source IDs, literal identifiers, localities, schedules, historical document lookups, and a rollback path. Follow [oboapp/oboapp#586](https://github.com/oboapp/oboapp/issues/586) and the consumer repository's instructions for the cutover. Validate the fork's CI and deployed collection behavior over the agreed observation period before preparing a later upstream backport.
+Keep existing source IDs, literal identifiers, localities, schedules, historical document lookups, and a rollback path. Follow [oboapp/oboapp#586](https://github.com/oboapp/oboapp/issues/586) and the consumer repository's instructions for the cutover. Validate the fork's CI, production deployment and deployed collection behavior over the agreed observation period before preparing a later upstream backport. Preserve each instance's selected catalog, jobs and deployment settings.

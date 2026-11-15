@@ -6,7 +6,11 @@ Start with [README.md](README.md) for the package inventory and repository overv
 
 **Read [RELEASING.md](RELEASING.md) before changing a package version, packing or publishing a release, creating release tags/GitHub releases, or diagnosing npm publication problems.** It is the canonical procedure for every package, including the SDK. Keep release instructions there and link to them from other documentation.
 
-Follow the user's authorized scope and retain publication authorization already given in the session. Prepare reviewable changes and checks before requesting any missing decision or access. A merged PR and a successful CI run are release inputs; publication follows the user's release authorization and the guide's verification steps.
+For source migrations and releases, prepare focused PRs, run independent subagent reviews, address actionable findings and existing review comments, and rerun the affected checks. The user performs the final review and merges the PRs. Apply this workflow to subsequent source migration items.
+
+Follow the user's authorized scope and retain release authorization already given in the session. After merge, the agent verifies the exact commit, CI and quality gate, creates the package tag and GitHub release, and attaches the inspected npm archive and checksum. Give the user exact publication commands. The user publishes to npm with their own account; the agent then verifies the registry version, README and archive integrity. Do not request npm credentials, require a separate login step, or ask again for an already authorized release action.
+
+Integrate verified published packages in `vbuch/oboapp` first. Validate the fork's CI and production deployment before backporting generic changes to `oboapp/oboapp`.
 
 ## Package boundaries and checks
 
