@@ -4,6 +4,7 @@ import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { RssFeedFetchError } from "@oboapp/source-web-utils/rss";
 import { createSourceWithDependencies, FEED_URL } from "../dist/esm/browser.js";
 import { extractDateCandidate, isDateRelevant, parseBulgarianDateOrRange, parsePancharevoDateToIso } from "../dist/esm/dates.js";
 import { createSource } from "../dist/esm/index.js";
@@ -173,7 +174,7 @@ test("rejects failed feed HTTP responses and paces attempts without launching Ch
   }
 });
 
-test("rejects feed network failures and preserves the original cause", async () => {
+test("retains feed context and nested network diagnostics without changing collection pacing", async () => {
   const cause = new Error("Connection reset");
   const failure = new TypeError("fetch failed", { cause });
   mock.method(globalThis, "fetch", async () => {
@@ -183,7 +184,16 @@ test("rejects feed network failures and preserves the original cause", async () 
   const source = createSourceWithDependencies(fixture);
   try {
     await assert.rejects(source.discoverItems(), (error) => {
-      assert.equal(error, failure);
+      assert.ok(error instanceof RssFeedFetchError);
+      assert.equal(error.url, FEED_URL);
+      assert.equal(error.attempts, 1);
+      assert.ok(error.cause instanceof Error);
+      assert.equal(error.cause.name, failure.name);
+      assert.equal(error.cause.message, failure.message);
+      assert.equal(error.cause.stack, failure.stack);
+      assert.ok(error.cause.cause instanceof Error);
+      assert.equal(error.cause.cause.message, cause.message);
+      assert.equal(error.cause.cause.stack, cause.stack);
       return true;
     });
     assert.equal(fixture.delay.mock.callCount(), 1);
