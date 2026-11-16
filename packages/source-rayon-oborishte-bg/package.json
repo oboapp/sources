@@ -52,14 +52,14 @@
     "prepack": "pnpm build"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.3"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
     "@oboapp/source-sdk": "0.1.1",
-    "html-entities": "2.6.0",
+    "@oboapp/source-web-utils": "workspace:*",
     "playwright": "1.61.1",
     "turndown": "7.2.2"
   },

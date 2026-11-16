@@ -1,8 +1,8 @@
 import type { DataSource, DiscoveredItem, SourceContent } from "@oboapp/source-sdk";
+import { fetchFeedXml } from "@oboapp/source-web-utils/rss";
 import { chromium, type Browser, type Page } from "playwright";
 import TurndownService from "turndown";
 import { extractFeedItems } from "./extractors.js";
-import { fetchFeedXml } from "./rss.js";
 
 const FEED_URL = "https://rayon-oborishte.bg/feed/";
 const SELECTORS = {
