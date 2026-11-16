@@ -1,8 +1,8 @@
 import {
   parseRssFeedItems,
   stripWordPressFeedAttribution,
-} from "./rss.js";
-import type { RssFeedItem } from "./rss.js";
+} from "@oboapp/source-web-utils/rss";
+import type { RssFeedItem } from "@oboapp/source-web-utils/rss";
 
 const SOURCE_HOSTNAME = "rayon-oborishte.bg";
 

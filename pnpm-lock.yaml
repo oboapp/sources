@@ -149,6 +149,9 @@ importers:
       '@oboapp/source-sdk':
         specifier: 0.1.1
         version: 0.1.1
+      '@oboapp/source-web-utils':
+        specifier: 0.4.0
+        version: 0.4.0
       html-entities:
         specifier: 2.6.0
         version: 2.6.0
@@ -565,6 +568,10 @@ packages:
   '@oboapp/source-sdk@0.2.0':
     resolution: {integrity: sha512-gzh4EEMzuA/2/A/+bORgYkJmpG9gyiuLeSMYQB3BwqF4+UqhuGBC/L7vAPFePtIhUJRPay4m1djrYE4WhaEWAg==}
     engines: {node: '>=20'}
+
+  '@oboapp/source-web-utils@0.4.0':
+    resolution: {integrity: sha512-KK+FJsRp6SEKlZAK8Ks1RBAnqvMC8WYatl9x+TFwHSqdlfX7p89UaRKlpsYJH2SMB7mO+y8QLwC/QXrnI1+1wg==}
+    engines: {node: '>=20.3'}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -1406,6 +1413,13 @@ snapshots:
   '@oboapp/source-sdk@0.1.1': {}
 
   '@oboapp/source-sdk@0.2.0': {}
+
+  '@oboapp/source-web-utils@0.4.0':
+    dependencies:
+      '@oboapp/source-sdk': 0.1.1
+      html-entities: 2.6.0
+      playwright: 1.61.1
+      turndown: 7.2.2
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
