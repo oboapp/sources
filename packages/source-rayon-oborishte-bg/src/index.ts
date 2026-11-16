@@ -1,4 +1,9 @@
-import type { CreateSource } from "@oboapp/source-sdk";
+import type { DataSource, SourceContext } from "@oboapp/source-sdk";
 import { createHybridSource } from "./hybrid.js";
+import type { SourceOptions } from "./options.js";
 
-export const createSource: CreateSource = () => createHybridSource();
+export type { SourceOptions } from "./options.js";
+
+export function createSource(_context: SourceContext, options: SourceOptions = {}): DataSource {
+  return createHybridSource(undefined, options);
+}

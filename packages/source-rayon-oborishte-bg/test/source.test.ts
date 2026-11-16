@@ -20,6 +20,8 @@ const xml = `<rss><channel><item>
 <description><![CDATA[Feed body]]></description>
 </item></channel></rss>`;
 const identifier = "https://rayon-oborishte.bg/Test%2fPost/?x=1&y=2";
+const noticesFeedUrl =
+  "https://rayon-oborishte.bg/feed/";
 
 function browserFixture(html: string, failNavigation = false) {
   const window = new Window();
@@ -51,6 +53,31 @@ function browserFixture(html: string, failNavigation = false) {
   const newPage = mock.fn(async () => page);
   return { browser: { newPage, close: closeBrowser } as unknown as Browser, closePage, closeBrowser, route, goto, newPage };
 }
+
+test("uses the root feed when it is available", async () => {
+  const requestedUrls: string[] = [];
+  globalThis.fetch = async (input) => {
+    const url = String(input);
+    requestedUrls.push(url);
+    if (url === noticesFeedUrl) {
+      return new Response(xml);
+    }
+    return new Response("Unsupported Media Type", { status: 415 });
+  };
+  const fixture = browserFixture("");
+  const launchBrowser = mock.fn(async () => fixture.browser);
+  const source = createHybridSource({ launchBrowser, delay: async () => {} });
+
+  assert.deepEqual(await source.discoverItems(), {
+    items: [{
+      identifier,
+      payload: { title: "Feed & title", date: "2026-06-09T11:13:10.000Z" },
+    }],
+  });
+  assert.deepEqual(requestedUrls, [noticesFeedUrl]);
+  assert.equal(launchBrowser.mock.callCount(), 0);
+  await source.close?.();
+});
 
 test("preserves identifiers and converts cleaned page content with RSS date", async () => {
   globalThis.fetch = async () => new Response(xml);
@@ -107,13 +134,36 @@ test("deduplicates and filters the feed using legacy URL and date rules", async 
   }
 });
 
-test("propagates feed failures and exposes isolated CommonJS metadata", async () => {
-  globalThis.fetch = async () => new Response("unavailable", { status: 503 });
-  const source = createHybridSource();
-  await assert.rejects(source.discoverItems(), /503/);
+test("reports RSS and API HTTP failures before launching the browser", async () => {
+  for (const status of [404, 503]) {
+    const requestedUrls: string[] = [];
+    globalThis.fetch = async (input) => {
+      requestedUrls.push(String(input));
+      return new Response("unavailable", { status });
+    };
+    const fixture = browserFixture("");
+    const launchBrowser = mock.fn(async () => fixture.browser);
+    const source = createHybridSource({ launchBrowser, delay: async () => {} });
+
+    await assert.rejects(source.discoverItems(), (error: unknown) => {
+      assert.ok(error instanceof Error);
+      assert.ok(error.message.includes(`RSS feed returned ${status} for ${noticesFeedUrl}`));
+      assert.ok(error.message.includes(`WordPress posts API returned ${status}`));
+      return true;
+    });
+    assert.equal(requestedUrls[0], noticesFeedUrl);
+    assert.equal(requestedUrls.length, 2);
+    assert.equal(launchBrowser.mock.callCount(), 0);
+    await source.close?.();
+    assert.equal(fixture.closeBrowser.mock.callCount(), 0);
+  }
+});
+
+test("exposes isolated CommonJS metadata", () => {
   const require = createRequire(import.meta.url);
   assert.equal(typeof require("../dist/cjs/index.js").createSource, "function");
   assert.deepEqual(require("../dist/cjs/metadata.js").metadata, metadata);
   assert.equal(metadata.id, "rayon-oborishte-bg");
+  assert.equal(metadata.url, "https://rayon-oborishte.bg/");
   assert.deepEqual(metadata.localities, ["bg.sofia"]);
 });

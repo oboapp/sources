@@ -1,10 +1,9 @@
 import type { DataSource, DiscoveredItem, SourceContent } from "@oboapp/source-sdk";
-import { fetchFeedXml } from "@oboapp/source-web-utils/rss";
 import { chromium, type Browser, type Page } from "playwright";
 import TurndownService from "turndown";
-import { extractFeedItems } from "./extractors.js";
+import { discoverFeedItems } from "./discovery.js";
+import type { SourceOptions } from "./options.js";
 
-const FEED_URL = "https://rayon-oborishte.bg/feed/";
 const SELECTORS = {
   CONTENT: "article, .entry-content, .post-content, main",
   TITLE: "h1, .entry-title, .post-title",
@@ -42,12 +41,15 @@ async function extractDetails(page: Page): Promise<{ title: string; contentHtml:
   }, { selectors: SELECTORS, unwanted: UNWANTED });
 }
 
-export function createHybridSource(dependencies: HybridDependencies = defaults): DataSource {
+export function createHybridSource(
+  dependencies: HybridDependencies = defaults,
+  options: SourceOptions = {},
+): DataSource {
   let browser: Browser | undefined;
   const markdown = new TurndownService({ headingStyle: "atx", codeBlockStyle: "fenced" });
   return {
     async discoverItems() {
-      const items = extractFeedItems(await fetchFeedXml(FEED_URL));
+      const items = await discoverFeedItems(dependencies.delay, options);
       const seen = new Set<string>();
       return {
         items: items.filter((item) => {
