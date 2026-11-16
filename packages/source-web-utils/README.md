@@ -20,9 +20,56 @@ ATX headings and fenced code blocks. A source instance starts Chromium only when
 fetching begins, reuses it, and closes each detail page on success or failure.
 Successful detail fetches wait two seconds. Call `close` in `finally`.
 
-RSS helpers retain the legacy URL, entity and date parsing rules, the RSS Accept
-header, and a 30-second timeout. `RssFeedHttpError` exposes the HTTP status and URL
-so a provider can distinguish a missing pagination page from an outage.
+RSS parsing retains the legacy URL, entity and date rules. Fetching keeps the RSS
+Accept header and browser-compatible user agent.
+
+## RSS retries and diagnostics
+
+`fetchFeedXml(url, timeoutMs = 30_000, options?)` returns the RSS XML. Existing
+one- and two-argument calls remain supported. The optional third argument accepts
+`{ onEvent }` for retry diagnostics.
+
+Each call makes at most two attempts within the original total timeout budget.
+That budget covers fetching, reading the response body and waiting before a
+retry. A retry waits at least two seconds and respects a longer valid
+`Retry-After` response header. The helper skips the retry when the remaining
+budget cannot cover its delay and another attempt.
+
+Recognized transient network failures and HTTP 408, 500, 502, 503 and 504 can
+retry. HTTP 429 can retry when it supplies a valid `Retry-After`. HTTP 401, 403,
+404 and 501, invalid RSS content, TLS failures, `AbortError` and unclassified
+network errors end the call.
+
+`RssFeedHttpError` retains its class, HTTP `status` and diagnostic `url`, so Sredets
+can still recognize a missing pagination page by its HTTP 404 status.
+`RssFeedFetchError` supplies a sanitized `url`, `attempts` and a cloned `cause`
+chain for transport and body-read failures. The cause keeps error names, stacks,
+network codes and nested or aggregate errors within bounded size and depth.
+The final error message includes the feed URL, attempt count and safe pagination
+values outside the URL, keeping them visible in application logs that remove
+query strings.
+
+Diagnostic URLs remove credentials, fragments and unsafe query parameters. They
+retain numeric `paged`, `page` and `start` values and fixed feed parameters.
+The original request URL and discovered article identifiers keep their literal
+spelling.
+
+`onEvent` receives sanitized primitive fields for `retry` and `recovered` events.
+Retry events include `attempt`, `nextAttempt`, `delayMs`, `reason` and the known
+network `code` or HTTP `status`. Recovery events include `attempts`. Both events
+include the diagnostic `url` and any safe `pagination` context.
+Callback failures are ignored, and the helper keeps event handling local to the
+call. Source factories must pass this callback to expose internal retry events
+to platform logging. The current factories still need that adoption; Obo's
+existing Cloud Run attempt logs already show recovery between scheduled task
+attempts.
+
+This contract contributes to
+[oboapp/oboapp#688](https://github.com/oboapp/oboapp/issues/688). The older
+Playwright readiness timeout in
+[#451](https://github.com/oboapp/oboapp/issues/451) is a separate failure class.
+Publish and verify helper version 0.5.0 before opening dependent source package
+PRs, following [RELEASING.md](../../RELEASING.md).
 
 ## Browser listings
 
