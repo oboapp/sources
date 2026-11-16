@@ -211,7 +211,7 @@ function transientNetworkCode(error: Error): string | undefined {
   const childCodes = children.map((child) => {
     return child instanceof Error ? transientNetworkCode(child) : undefined;
   });
-  if (childCodes.some((childCode) => childCode === undefined)) {
+  if (childCodes.includes(undefined)) {
     return undefined;
   }
   return typeof code === "string" ? code : childCodes[0];
