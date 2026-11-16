@@ -58,8 +58,9 @@ export function createNimhSource(dependencies: NimhDependencies): DataSource {
       try {
         assertOpen();
         const page = await current.newPage();
+        // Warning text and tables are server-rendered and ready with the DOM.
         const response = await page.goto(metadata.url, {
-          waitUntil: "networkidle",
+          waitUntil: "domcontentloaded",
           timeout: 30_000,
         });
         if (response && !response.ok()) {

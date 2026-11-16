@@ -46,7 +46,7 @@ test("preserves independently frozen browser content and identifier without navi
   assert.deepEqual(await source.fetchItem({ identifier: expected.identifier }), expected.content);
   assert.equal(fixture.launchBrowser.mock.callCount(), 1);
   assert.deepEqual(fixture.page.goto.mock.calls[0]?.arguments, [metadata.url, {
-    waitUntil: "networkidle",
+    waitUntil: "domcontentloaded",
     timeout: 30_000,
   }]);
   assert.equal(fixture.page.goto.mock.callCount(), 1);
@@ -55,6 +55,33 @@ test("preserves independently frozen browser content and identifier without navi
   await assert.rejects(source.fetchItem({ identifier: expected.identifier }), /closed/);
   await assert.rejects(source.discoverItems(), /closed/);
 });
+
+for (const [name, html, items] of [
+  ["active warnings", activeHtml, [{ identifier: expected.identifier }]],
+  ["no danger", noDangerHtml, []],
+] as const) {
+  test(`discovers ${name} when the DOM is ready but background requests remain active`, async () => {
+    const fixture = browserFixture(html);
+    fixture.page.goto.mock.mockImplementation(async (_url, options) => {
+      if (options?.waitUntil === "networkidle") {
+        throw new Error("Background requests prevented networkidle");
+      }
+      return fixture.response;
+    });
+    const source = createNimhSource(fixture);
+    try {
+      const page = await source.discoverItems();
+      if (page.items.length > 0) {
+        assert.deepEqual(await source.fetchItem(page.items[0]!), expected.content);
+      }
+      assert.deepEqual(page.items, items);
+      assert.equal(fixture.page.content.mock.callCount(), 1);
+      assert.equal(fixture.close.mock.callCount(), 1);
+    } finally {
+      await source.close?.();
+    }
+  });
+}
 
 test("retains the browser serialization identity boundary for HTML entities", async () => {
   const raw = createNimhSource(browserFixture(rawHtml));

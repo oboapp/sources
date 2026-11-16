@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- Discover warnings once the server-rendered DOM is ready, even when background
+  requests prevent network idle. Preserve warning content, identifiers and HTTP
+  failure reporting.
+
 ## 0.1.0
 
 - Extract Sofia's NIMH severe-weather collector into an independently versioned

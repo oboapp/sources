@@ -6,8 +6,10 @@ using the Obo source SDK 0.2.0.
 
 ## Collection
 
-`discoverItems()` loads the page once in Chromium, waits for `networkidle`, and
-parses its serialized HTML. Active warnings produce one synthetic identifier:
+`discoverItems()` loads the page once in Chromium, waits for `domcontentloaded`,
+and parses its serialized HTML. The warning text and tables are server-rendered,
+so discovery can finish while background requests remain active. Active warnings
+produce one synthetic identifier:
 
 ```text
 https://weather.bg/obshtini/index.php?z=u&o=SOF&date={forecastDate}&h={12-character-hash}
@@ -57,7 +59,7 @@ warnings are labelled explicitly.
 Install the published package with Node.js 20.3 or later:
 
 ```sh
-pnpm add --save-exact @oboapp/source-nimh-severe-weather@0.1.0
+pnpm add --save-exact @oboapp/source-nimh-severe-weather@0.1.1
 ```
 
 ESM and CommonJS exports include TypeScript declarations. Load browser-safe
