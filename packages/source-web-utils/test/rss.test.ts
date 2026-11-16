@@ -4,6 +4,7 @@ import { afterEach, mock, test } from "node:test";
 import {
   fetchFeedXml,
   parseRssFeedItems,
+  RssFeedFetchError,
   RssFeedHttpError,
   stripWordPressFeedAttribution,
 } from "../dist/esm/rss.js";
@@ -117,7 +118,8 @@ test("returns a status-bearing HTTP error for pagination and clears the timer", 
     assert.ok(error instanceof RssFeedHttpError);
     assert.equal(error.status, 404);
     assert.equal(error.url, "https://example.com/feed/?paged=2");
-    assert.equal(error.message, "RSS feed returned 404 for https://example.com/feed/?paged=2");
+    assert.ok(error.message.includes("RSS feed returned 404"));
+    assert.ok(error.message.includes(error.url));
     assert.equal(error.name, "RssFeedHttpError");
     return true;
   });
@@ -139,7 +141,12 @@ test("rejects successful HTML/error pages and clears the timer after body failur
     });
     return response;
   };
-  await assert.rejects(fetchFeedXml("https://example.com/feed/"), /Connection closed during body read/);
+  await assert.rejects(fetchFeedXml("https://example.com/feed/"), (error: unknown) => {
+    assert.ok(error instanceof RssFeedFetchError);
+    assert.ok(error.cause instanceof Error);
+    assert.equal(error.cause.message, "Connection closed during body read");
+    return true;
+  });
   context.mock.timers.tick(30_001);
   assert.equal(signal?.aborted, false);
 });
@@ -156,7 +163,11 @@ test("aborts stalled fetches at the configured timeout", async (context) => {
     });
   };
   const request = fetchFeedXml("https://example.com/feed/", 25);
-  const rejected = assert.rejects(request, /Feed request aborted/);
+  const rejected = assert.rejects(request, (error: unknown) => {
+    assert.ok(error instanceof RssFeedFetchError);
+    assert.ok(error.cause instanceof Error);
+    return true;
+  });
   context.mock.timers.tick(24);
   assert.equal(signal?.aborted, false);
   context.mock.timers.tick(1);

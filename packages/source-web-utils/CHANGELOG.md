@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.0
+
+- Add bounded RSS fetch retries with at most two attempts and two-second minimum
+  pacing inside the original total timeout budget, including body reads.
+- Retry recognized transient network failures and selected HTTP statuses. Honor
+  valid `Retry-After` values and keep persistent access, content and TLS failures
+  visible.
+- Preserve HTTP status errors for pagination and add `RssFeedFetchError` with a
+  sanitized feed URL, attempt count and bounded nested error diagnostics.
+- Add an optional third `{ onEvent }` argument to `fetchFeedXml` for safe `retry`
+  and `recovered` events. Source packages can adopt it after the helper release
+  is published and verified. Existing call signatures and literal identifiers
+  remain supported.
+
 ## 0.4.0
 
 - Add optional listing-post filtering and pass the matching listing metadata to

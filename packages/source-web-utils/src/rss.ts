@@ -1,17 +1,15 @@
 import { decode as decodeHtmlEntities } from "html-entities";
 
-export const RSS_FEED_FETCH_TIMEOUT_MS = 30_000;
-
-/** HTTP status remains available to sources with provider-specific pagination. */
-export class RssFeedHttpError extends Error {
-  constructor(
-    readonly status: number,
-    readonly url: string,
-  ) {
-    super(`RSS feed returned ${status} for ${url}`);
-    this.name = "RssFeedHttpError";
-  }
-}
+export {
+  fetchFeedXml,
+  RssFeedFetchError,
+  RssFeedHttpError,
+  RSS_FEED_FETCH_TIMEOUT_MS,
+  RSS_FEED_FETCH_MAX_ATTEMPTS,
+  RSS_FEED_FETCH_RETRY_DELAY_MS,
+  type RssFeedFetchEvent,
+  type RssFeedFetchOptions,
+} from "./rss-fetch.js";
 
 export interface RssFeedItem {
   url: string;
@@ -95,41 +93,6 @@ export function stripWordPressFeedAttribution(contentHtml: string): string {
   return (
     contentHtml.slice(0, removeStart) + contentHtml.slice(removeEnd)
   ).trim();
-}
-
-/**
- * Fetch RSS XML with a small timeout and a browser-like user agent.
- */
-export async function fetchFeedXml(
-  url: string,
-  timeoutMs: number = RSS_FEED_FETCH_TIMEOUT_MS,
-): Promise<string> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; oboapp-crawler/1.0)",
-        Accept: "application/rss+xml, application/xml, text/xml, */*",
-      },
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      throw new RssFeedHttpError(response.status, url);
-    }
-
-    const text = await response.text();
-    if (text.includes("<rss") || text.includes("<channel>")) {
-      return text;
-    }
-    throw new Error(
-      `RSS feed response does not look like RSS (possible anti-bot or error page) for ${url}`,
-    );
-  } finally {
-    clearTimeout(timeoutId);
-  }
 }
 
 /**
