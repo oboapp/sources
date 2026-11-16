@@ -4,16 +4,19 @@ import {
   type BrowserDependencies,
   type BrowserPostLink,
 } from "@oboapp/source-web-utils/browser";
+import { fetchFeedXml, parseRssFeedItems } from "@oboapp/source-web-utils/rss";
 import type { Page } from "playwright";
-import { extractDateCandidate, isDateRelevant, parseBulgarianDateOrRange, parsePancharevoDateToIso } from "./dates.js";
+import { extractDateCandidate, isDateRelevant, parseArticlePublicationDate, parseBulgarianDateOrRange, parsePancharevoDateToIso } from "./dates.js";
 import { metadata } from "./metadata.js";
+
+export const FEED_URL = `${metadata.url}?format=feed&type=rss`;
 
 const selectors = {
   INDEX: {
-    POST_CONTAINER: "div.items-row article.item, article.item",
-    POST_LINK: "a.readM, h2[itemprop='name'] a, a[itemprop='url']",
-    POST_DATE: "div.col-md-9:not(.entry-header), .introtext, p",
-    POST_TITLE: "h2[itemprop='name'], h2, h3, .entry-title, .post-title",
+    POST_CONTAINER: "article.blog-card",
+    POST_LINK: "a[href*='/planovi-remonti/']",
+    POST_DATE: "time",
+    POST_TITLE: "h3.blog-card__title",
   },
   POST: {
     CONTENT: "article.item-page [itemprop='articleBody'], [itemprop='articleBody'], article.item-page, main",
@@ -35,7 +38,9 @@ function acceptsUrl(url: string): boolean {
   } catch {
     // The legacy collector keeps malformed percent sequences in the raw path.
   }
-  return path.includes("/ремонти-и-инфраструктура/") && !parsed.searchParams.has("start");
+  const articlePath = path.includes("/ремонти-и-инфраструктура/")
+    || path.startsWith("/gradska-i-okolna-sreda/planovi-remonti/");
+  return articlePath && !parsed.searchParams.has("start");
 }
 
 function isRelevantPost(post: BrowserPostLink): boolean {
@@ -51,30 +56,46 @@ function isRelevantPost(post: BrowserPostLink): boolean {
 }
 
 async function extractDetails(page: Page) {
-  return page.evaluate((postSelectors) => {
-    const title = document.querySelector(postSelectors.TITLE)?.textContent?.trim() || "";
-    let dateText = document.querySelector(postSelectors.DATE)?.textContent?.trim() || "";
-    const content = document.querySelector(postSelectors.CONTENT);
+  const details = await page.evaluate((postSelectors) => {
+    const article = document.querySelector("article#article_view_news");
+    const isCurrentArticle = Boolean(article);
+    const titleElement = article
+      ? article.querySelector("h1.article-title")
+      : document.querySelector(postSelectors.TITLE);
+    const title = titleElement?.textContent?.trim() || "";
+    let dateText = article
+      ? article.querySelector("time[datetime]")?.getAttribute("datetime")?.trim() || ""
+      : document.querySelector(postSelectors.DATE)?.textContent?.trim() || "";
+    const content = article
+      ? article.querySelector(".article-body")
+      : document.querySelector(postSelectors.CONTENT);
     if (!content) {
-      return { title, dateText, contentHtml: "" };
+      return { title, dateText, contentHtml: "", isCurrentArticle };
     }
     const clone = content.cloneNode(true);
     if (!(clone instanceof HTMLElement)) {
-      return { title: "", dateText: "", contentHtml: "" };
+      return { title: "", dateText: "", contentHtml: "", isCurrentArticle };
     }
     for (const element of Array.from(clone.querySelectorAll("script, style, nav, footer, .sharedaddy, .share-buttons, .post-navigation"))) {
       element.remove();
     }
-    if (!dateText) {
+    if (!article && !dateText) {
       const paragraph = document.querySelector("article.item-page [itemprop='articleBody'] p, [itemprop='articleBody'] p, article.item-page p");
       dateText = title || paragraph?.textContent?.trim() || "";
     }
-    return { title, dateText, contentHtml: clone.innerHTML };
+    return { title, dateText, contentHtml: clone.innerHTML, isCurrentArticle };
   }, selectors.POST);
+  return {
+    title: details.title,
+    dateText: details.isCurrentArticle
+      ? parseArticlePublicationDate(details.dateText)
+      : details.dateText,
+    contentHtml: details.contentHtml,
+  };
 }
 
 export function createSourceWithDependencies(dependencies?: BrowserDependencies): DataSource {
-  return createBrowserSource({
+  const articles = createBrowserSource({
     indexUrl: metadata.url,
     selectors,
     urlFilter: acceptsUrl,
@@ -83,4 +104,42 @@ export function createSourceWithDependencies(dependencies?: BrowserDependencies)
     parsePublicationDate: parsePancharevoDateToIso,
     unwantedElements: [],
   }, dependencies);
+
+  async function paceFeedRequest(): Promise<void> {
+    if (dependencies) {
+      await dependencies.delay();
+      return;
+    }
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 2000);
+    });
+  }
+
+  return {
+    async discoverItems() {
+      try {
+        const feed = parseRssFeedItems(await fetchFeedXml(FEED_URL));
+        const identifiers = new Set<string>();
+        for (const item of feed) {
+          // RSS dates are publication dates; only title dates describe an event window.
+          if (acceptsUrl(item.url) && isRelevantPost({ ...item, date: "" })) {
+            identifiers.add(item.url);
+          }
+        }
+        return {
+          items: Array.from(identifiers, (identifier) => {
+            return { identifier };
+          }),
+        };
+      } finally {
+        await paceFeedRequest();
+      }
+    },
+    fetchItem(item) {
+      return articles.fetchItem(item);
+    },
+    async close() {
+      await articles.close?.();
+    },
+  };
 }

@@ -124,7 +124,23 @@ export function isDateRelevant(
   return reference >= start && reference <= end;
 }
 
+export function parseArticlePublicationDate(dateText: string): string {
+  const isoTimestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
+  const timestamp = Date.parse(dateText);
+  const localTimestamp = Date.parse(`${dateText.slice(0, 19)}Z`);
+  if (!isoTimestamp.test(dateText)
+      || Number.isNaN(timestamp)
+      || Number.isNaN(localTimestamp)
+      || new Date(localTimestamp).toISOString().slice(0, 19) !== dateText.slice(0, 19)) {
+    throw new Error(`Missing or invalid Pancharevo article publication datetime: ${dateText}`);
+  }
+  return new Date(timestamp).toISOString();
+}
+
 export function parsePancharevoDateToIso(dateText: string): string {
+  if (/^\d{4}-\d{2}-\d{2}T/.test(dateText)) {
+    return parseArticlePublicationDate(dateText);
+  }
   const candidate = extractDateCandidate(dateText);
   if (candidate) {
     return parseBulgarianDateOrRange(candidate).start.toISOString();

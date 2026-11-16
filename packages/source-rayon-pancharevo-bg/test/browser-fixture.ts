@@ -6,6 +6,7 @@ export function browserFixture(indexUrl: string, listingHtml: string, detailHtml
   const window = new Window({ url: indexUrl });
   let currentHtml = listingHtml;
   let failNextDetail = false;
+  let responseStatus = 200;
   const closePage = mock.fn(async () => {
     return undefined;
   });
@@ -19,6 +20,14 @@ export function browserFixture(indexUrl: string, listingHtml: string, detailHtml
       throw new Error("Detail navigation failed");
     }
     currentHtml = url === indexUrl ? listingHtml : detailHtml;
+    return {
+      ok() {
+        return responseStatus >= 200 && responseStatus < 300;
+      },
+      status() {
+        return responseStatus;
+      },
+    };
   });
   const route = mock.fn(async (pattern: string, handler: (route: Route) => Promise<void>) => {
     void pattern;
@@ -68,6 +77,9 @@ export function browserFixture(indexUrl: string, listingHtml: string, detailHtml
     },
     setDetailHtml(html: string) {
       detailHtml = html;
+    },
+    setResponseStatus(status: number) {
+      responseStatus = status;
     },
   };
 }
