@@ -85,5 +85,5 @@ are supported. The package root loads server-only runtime code.
 Run `pnpm check` from the repository root. Tests cover RSS boundaries, literal
 identifiers, resource blocking, Markdown, browser reuse, cleanup and failures.
 See [the release guide](../../RELEASING.md) for independent version publication.
-Destination Sonar analysis is tracked in
-[oboapp/oboapp#663](https://github.com/oboapp/oboapp/issues/663).
+Coverage mapping, CI analysis and quality-gate checks are documented in
+[SONAR.md](../../SONAR.md).
