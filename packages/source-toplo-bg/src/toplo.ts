@@ -5,14 +5,30 @@ import type { ToploWarning } from "./geometry.js";
 
 const TARGET_URL = "https://toplo.bg/accidents-and-maintenance";
 
+export interface ToploListingObservation {
+  readonly html: string;
+  readonly observedAt: string;
+}
+
+export interface ToploListingResult {
+  readonly count: number;
+}
+
+export type ToploListingObserver = (
+  listing: ToploListingObservation,
+) => ToploListingResult | Promise<ToploListingResult>;
+
 export interface ToploDependencies {
+  onListing?: ToploListingObserver;
   fetch: typeof globalThis.fetch;
   signal?: AbortSignal;
   warn?: ToploWarning;
 }
 
 const defaults: ToploDependencies = {
-  fetch: (...args) => globalThis.fetch(...args),
+  fetch: (...args) => {
+    return globalThis.fetch(...args);
+  },
 };
 
 /** Listing content stays in this scan's instance, including large geometries. */
@@ -40,12 +56,28 @@ export function createToploSource(dependencies: ToploDependencies = defaults): D
       }
       const html = await response.text();
       requestSignal.throwIfAborted();
+      let listedCount: number | undefined;
+      if (dependencies.onListing !== undefined) {
+        const observation = await dependencies.onListing({
+          html,
+          observedAt: new Date().toISOString(),
+        });
+        if (!observation || !Number.isSafeInteger(observation.count) || observation.count < 0) {
+          throw new TypeError("Toplo listing observer must return a nonnegative safe integer count");
+        }
+        listedCount = observation.count;
+        requestSignal.throwIfAborted();
+      }
       for (const incident of parseIncidents(html, dependencies.warn)) {
         if (!incidents.has(incident.identifier)) {
           incidents.set(incident.identifier, incident);
         }
       }
-      if (incidents.size === 0) {
+      if (listedCount === 0 && incidents.size > 0) {
+        incidents.clear();
+        throw new Error("Toplo listing observer reported zero for a nonempty listing");
+      }
+      if (incidents.size === 0 && listedCount !== 0) {
         throw new Error("No incidents found in HTML");
       }
       return {
