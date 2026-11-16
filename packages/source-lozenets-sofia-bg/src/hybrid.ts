@@ -1,14 +1,24 @@
 import type { DataSource } from "@oboapp/source-sdk";
 import { createHybridSource, type HybridDependencies } from "@oboapp/source-web-utils";
-import { fetchFeedXml, parseRssFeedItems } from "@oboapp/source-web-utils/rss";
+import {
+  fetchFeedXml,
+  parseRssFeedItems,
+  type RssFeedFetchOptions,
+} from "@oboapp/source-web-utils/rss";
 
 const FEED_URL = "https://lozenets.sofia.bg/category/%d0%bd%d0%be%d0%b2%d0%b8%d0%bd%d0%b8/feed/";
 
-export function createSourceWithDependencies(dependencies?: HybridDependencies): DataSource {
+export function createSourceWithDependencies(
+  dependencies?: HybridDependencies,
+  feedOptions?: RssFeedFetchOptions,
+): DataSource {
   return createHybridSource({
-    discoverItems: async () => parseRssFeedItems(await fetchFeedXml(FEED_URL), {
-      hostname: "lozenets.sofia.bg",
-    }),
+    async discoverItems() {
+      const xml = await fetchFeedXml(FEED_URL, undefined, feedOptions);
+      return parseRssFeedItems(xml, {
+        hostname: "lozenets.sofia.bg",
+      });
+    },
     selectors: {
       TITLE: ".single-post-title",
       CONTENT: ".single-blog-content.entry",

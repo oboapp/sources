@@ -61,8 +61,8 @@ importers:
         specifier: 0.1.1
         version: 0.1.1
       '@oboapp/source-web-utils':
-        specifier: workspace:*
-        version: link:../source-web-utils
+        specifier: 0.5.0
+        version: 0.5.0
     devDependencies:
       happy-dom:
         specifier: 20.0.11
@@ -571,6 +571,10 @@ packages:
 
   '@oboapp/source-web-utils@0.4.0':
     resolution: {integrity: sha512-KK+FJsRp6SEKlZAK8Ks1RBAnqvMC8WYatl9x+TFwHSqdlfX7p89UaRKlpsYJH2SMB7mO+y8QLwC/QXrnI1+1wg==}
+    engines: {node: '>=20.3'}
+
+  '@oboapp/source-web-utils@0.5.0':
+    resolution: {integrity: sha512-2HRfsVQk9+3XxRJwQ4Mb0ZUrYQ7h4CHqmtYeozUP7q4vJUtC6PFTNrnYsl2SkBwtvLjTCZ+fomjiRiOqElTErQ==}
     engines: {node: '>=20.3'}
 
   '@pkgjs/parseargs@0.11.0':
@@ -1415,6 +1419,13 @@ snapshots:
   '@oboapp/source-sdk@0.2.0': {}
 
   '@oboapp/source-web-utils@0.4.0':
+    dependencies:
+      '@oboapp/source-sdk': 0.1.1
+      html-entities: 2.6.0
+      playwright: 1.61.1
+      turndown: 7.2.2
+
+  '@oboapp/source-web-utils@0.5.0':
     dependencies:
       '@oboapp/source-sdk': 0.1.1
       html-entities: 2.6.0
