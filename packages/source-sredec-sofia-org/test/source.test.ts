@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
+import { cpSync, mkdtempSync, rmSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { Window } from "happy-dom";
 import type { HybridDependencies } from "@oboapp/source-web-utils";
 import { createSource, createSourceWithDependencies } from "../dist/esm/index.js";
@@ -201,14 +203,33 @@ test("publishes matching ESM/CommonJS factories and browser-safe literal catalog
     localities: ["bg.sofia"],
   });
 
-  const metadataPath = fileURLToPath(new URL("../dist/cjs/metadata.js", import.meta.url));
-  const child = spawnSync(process.execPath, ["-e", `
-    const { metadata } = require(process.argv[1]);
-    const runtimeModules = Object.keys(require.cache).filter((key) => /playwright|source-web-utils|turndown/.test(key));
-    console.log(JSON.stringify({ metadata, runtimeModules }));
-  `, metadataPath], { encoding: "utf8" });
-  assert.equal(child.status, 0, child.stderr);
-  assert.deepEqual(JSON.parse(child.stdout), { metadata, runtimeModules: [] });
   const source = await createSource({ locality: "bg.sofia" });
   await source.close?.();
+});
+
+test("loads catalog metadata in a checkout named after a runtime dependency", (t) => {
+  const packageDirectory = fileURLToPath(new URL("../", import.meta.url));
+  const directory = mkdtempSync(join(packageDirectory, "source-web-utils-release-"));
+  t.after(() => {
+    rmSync(directory, { recursive: true, force: true });
+  });
+  const builtModule = fileURLToPath(new URL("../dist/cjs/metadata.js", import.meta.url));
+  const fixtureModule = join(directory, "metadata.js");
+  cpSync(dirname(builtModule), directory, { recursive: true });
+  for (const path of [builtModule, fixtureModule]) {
+    const child = spawnSync(process.execPath, ["-e", `
+      const Module = require("node:module");
+      const load = Module._load;
+      const runtime = ["playwright", "playwright-core", "turndown", "@oboapp/source-web-utils"];
+      Module._load = function (request, ...args) {
+        if (runtime.some((name) => request === name || request.startsWith(name + "/"))) {
+          throw new Error("Catalog loaded collection runtime: " + request);
+        }
+        return load.call(this, request, ...args);
+      };
+      console.log(JSON.stringify(require(process.argv[1]).metadata));
+    `, path], { encoding: "utf8" });
+    assert.equal(child.status, 0, child.stderr);
+    assert.deepEqual(JSON.parse(child.stdout), metadata);
+  }
 });

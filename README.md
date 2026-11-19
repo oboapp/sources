@@ -6,6 +6,8 @@ The source migration is tracked in [oboapp/oboapp#586](https://github.com/oboapp
 
 ## Contributing and publishing
 
+Use the [source package README template and review checklist](docs/source-package-readme.md) when adding a provider or documenting a change in coverage.
+
 Agents start with [AGENTS.md](AGENTS.md). For version changes, package publication, release tags, GitHub releases, or publishing problems, follow [RELEASING.md](RELEASING.md), the canonical release procedure for every package.
 
 ## Packages
@@ -13,6 +15,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | Package | Purpose |
 | --- | --- |
 | [`@oboapp/source-sdk`](packages/source-sdk) | Source contracts, isolated catalog metadata types, and discovery payload validation |
+| [`@oboapp/source-sensor-community`](packages/source-sensor-community) | Air-quality alerts from recent Sensor.Community readings |
 | [`@oboapp/source-nimh-severe-weather`](packages/source-nimh-severe-weather) | City-wide NIMH weather warnings with legacy browser-serialized identifiers |
 | [`@oboapp/source-erm-zapad`](packages/source-erm-zapad) | Electricity interruptions with globally deduplicated incident centers from ERM Zapad |
 | [`@oboapp/source-web-utils`](packages/source-web-utils) | Shared RSS parsing, browser listing and detail collection |
@@ -21,6 +24,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | [`@oboapp/source-rayon-oborishte-bg`](packages/source-rayon-oborishte-bg) | RSS and webpage source for Sofia district Oborishte |
 | [`@oboapp/source-so-slatina-org`](packages/source-so-slatina-org) | RSS and webpage source for Sofia district Slatina |
 | [`@oboapp/source-toplo-bg`](packages/source-toplo-bg) | Listing-only heating incidents with synthetic identifiers from Toplofikatsia Sofia |
+| [`@oboapp/source-sofia-bg`](packages/source-sofia-bg) | Municipal repair notices from the Sofia website |
 | [`@oboapp/source-sofiyska-voda`](packages/source-sofiyska-voda) | Paginated ArcGIS water outages with provider geometry from Sofiyska Voda |
 | [`@oboapp/source-lozenets-sofia-bg`](packages/source-lozenets-sofia-bg) | RSS and webpage source for Sofia district Lozenets |
 | [`@oboapp/source-studentski-bg`](packages/source-studentski-bg) | RSS and webpage source for Sofia district Studentski |
@@ -33,6 +37,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | [`@oboapp/source-mladost-bg`](packages/source-mladost-bg) | Repair announcements and webpage content for Sofia district Mladost |
 | [`@oboapp/source-vrabnitsa-org`](packages/source-vrabnitsa-org) | News and events with webpage content for Sofia district Vrabnitsa |
 | [`@oboapp/source-sdvr-mvr-bg`](packages/source-sdvr-mvr-bg) | Browser news listing and article content for the Sofia Directorate of Interior |
+| [`@oboapp/source-krasna-polyana-org`](packages/source-krasna-polyana-org) | Public district notices from Krasna Polyana's WordPress API |
 
 Use Node.js 20.3 or later and the pinned pnpm version. Run `pnpm install --frozen-lockfile` and `pnpm check`. CI checks Node.js 20, 22, and 24 and packs each package.
 

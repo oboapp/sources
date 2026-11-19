@@ -2,15 +2,23 @@
 
 Full-content RSS source for Sofia district Triaditsa, extracted from Obo's existing crawler. Licensed under The Unlicense.
 
+## Use
+
+Install with `pnpm add --save-exact @oboapp/source-triaditsa-org`. Obo passes the factory and metadata to its scheduled runner. To preview the same source directly, run this example.
+
 ```ts
 import { createSource } from "@oboapp/source-triaditsa-org";
 import { metadata } from "@oboapp/source-triaditsa-org/metadata";
 
 const source = await createSource({ locality: "bg.sofia" });
-const page = await source.discoverItems();
-for (const item of page.items) {
-  const content = await source.fetchItem(item);
-  // Pass content to your application's validation and persistence layer.
+try {
+  const page = await source.discoverItems();
+  for (const item of page.items) {
+    const content = await source.fetchItem(item);
+    console.log(metadata.id, item.identifier, content.title);
+  }
+} finally {
+  await source.close?.();
 }
 ```
 
@@ -18,8 +26,7 @@ In Obo, pass the factory and metadata to its scheduled source runner instead of 
 
 Each scan requests the News and announcements RSS feeds once each, sequentially, with a 30-second timeout per request. Repeated URLs across both feeds produce one candidate, with News taking precedence. A failed feed request fails discovery so the caller can retry the scan. Items retain the historical parser's URL handling, date conversion, WordPress attribution removal, and Markdown output. Embedded style and script elements are removed before conversion. `fetchItem` converts content already supplied by the feed and makes no additional network request. Obo skips known identifiers and owns persistence and retry scheduling.
 
-The source is independently versioned. Publishing this package does not switch an existing Obo deployment; the pilot integration is a separate PR.
-
+Node.js 20 or later is required. The package uses native HTTP. All scan state is in memory.
 
 ## Feed coverage
 
@@ -34,3 +41,7 @@ The feed window determines discovery coverage. Older consultations and projects 
 Document links are retained, but attachment text is not extracted. Some planning notices consist only of document links. Existing URLs remain skipped by Obo, so later page or attachment edits are not collected. Original publication dates are retained; Obo applies its existing age and relevance filters, including to routine vehicle notices. These gaps can be assessed after observing the expanded feed results.
 
 The `test/announcements.xml` fixture contains the first item from the announcements feed captured on 2026-10-26, a planning notice published on 2026-10-22. The item's namespace declaration was moved to the RSS root for the existing parser.
+
+## Testing and releases
+
+Run `pnpm check` from the repository root to build and test the package. [Package tests](https://github.com/oboapp/sources/tree/main/packages/source-triaditsa-org/test) · [Release guide](https://github.com/oboapp/sources/blob/main/RELEASING.md)
