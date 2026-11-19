@@ -61,7 +61,9 @@ test("propagates HTTP and schema errors and accepts an empty listing", async (t)
   const request = t.mock.method(globalThis, "fetch", async () => new Response(null, { status: 503 }));
   const source = await createSource({ locality: "bg.sofia" });
   await assert.rejects(source.discoverItems(), /HTTP 503/);
-  for (const invalid of [{}, [null], [{ link: "/relative" }], [{ link: "https://old.krasnapolyana.bg/home/latest-news/343-2026-05-28-14-41-39" }]]) {
+  request.mock.mockImplementation(async () => Response.json({}));
+  await assert.rejects(source.discoverItems(), TypeError);
+  for (const invalid of [[null], [{ link: "/relative" }], [{ link: "https://old.krasnapolyana.bg/home/latest-news/343-2026-05-28-14-41-39" }]]) {
     request.mock.mockImplementation(async () => Response.json(invalid));
     await assert.rejects(source.discoverItems());
   }

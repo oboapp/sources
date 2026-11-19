@@ -69,7 +69,7 @@ export const createSource: CreateSource = ({ signal }) => {
       }
       const rows: unknown = await response.json();
       if (!Array.isArray(rows)) {
-        throw new Error("Expected an array of WordPress notices");
+        throw new TypeError("Expected an array of WordPress notices");
       }
       for (const row of rows) {
         const identifier = noticeIdentifier(row);
