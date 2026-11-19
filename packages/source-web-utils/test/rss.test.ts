@@ -152,7 +152,7 @@ test("rejects successful HTML/error pages and clears the timer after body failur
 });
 
 test("aborts stalled fetches at the configured timeout", async (context) => {
-  context.mock.timers.enable({ apis: ["setTimeout"] });
+  context.mock.timers.enable({ apis: ["Date", "setTimeout"] });
   let signal: AbortSignal | undefined;
   globalThis.fetch = async (_input, options) => {
     signal = options?.signal ?? undefined;
