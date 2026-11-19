@@ -5,7 +5,7 @@ const transientCodes = new Set([
   "UND_ERR_HEADERS_TIMEOUT", "UND_ERR_SOCKET",
 ]);
 
-function transientError(error: unknown): boolean {
+function transientError(error: unknown): error is Error {
   if (!(error instanceof Error)) {
     return false;
   }
@@ -19,6 +19,22 @@ function transientError(error: unknown): boolean {
 export interface HttpOptions {
   fetch?: typeof fetch;
   delay?: (ms: number) => Promise<void>;
+}
+
+async function readResponse(response: Response, url: string, feed: boolean): Promise<string | Error> {
+  if (!response.ok) {
+    await response.body?.cancel().catch(() => undefined);
+    const failure = new Error(`Serdika returned HTTP ${response.status} for ${url}`);
+    if ([408, 425, 429].includes(response.status) || response.status >= 500) {
+      return failure;
+    }
+    throw failure;
+  }
+  const text = await response.text();
+  if (feed && !text.includes("<atom:feed")) {
+    return new Error("Unexpected Serdika response format (expected an ATOM feed)");
+  }
+  return text;
 }
 
 export async function readPortal(
@@ -38,22 +54,14 @@ export async function readPortal(
         signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
         headers: { Accept: "text/html,application/xhtml+xml" },
       });
-      if (response.ok) {
-        const text = await response.text();
-        if (!feed || text.includes("<atom:feed")) {
-          return text;
-        }
-        failure = new Error("Unexpected Serdika response format (expected an ATOM feed)");
-      } else {
-        await response.body?.cancel().catch(() => undefined);
-        failure = new Error(`Serdika returned HTTP ${response.status} for ${url}`);
-        if (![408, 425, 429].includes(response.status) && response.status < 500) {
-          throw failure;
-        }
+      const body = await readResponse(response, url, feed);
+      if (typeof body === "string") {
+        return body;
       }
+      failure = body;
     } catch (error) {
       signal?.throwIfAborted();
-      if (!transientError(error) || !(error instanceof Error)) {
+      if (!transientError(error)) {
         throw error;
       }
       failure = error;

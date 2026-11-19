@@ -128,6 +128,16 @@ test("uses legacy publication date precedence and a scan-time fallback", () => {
   assert.ok(Date.parse(parsePublicationDate("07/04/26/99")) >= before);
 });
 
+test("keeps literal less-than signs and discards an unfinished title tag", async () => {
+  const html = '<h2>2 < 3 > 1 <b>units</b> <unfinished</h2><div id="body">Notice body</div>';
+  const source = createSource({ locality: "bg.sofia" }, {
+    fetch: async () => new Response(html),
+    delay: async () => undefined,
+  });
+  const notice = await source.fetchItem({ identifier: host + "/notice" });
+  assert.equal(notice.title, "2 < 3 > 1 units");
+});
+
 test("exports both module formats and literal catalog metadata", () => {
   const require = createRequire(import.meta.url);
   assert.equal(typeof require("@oboapp/source-serdika-egov-bg").createSource, "function");

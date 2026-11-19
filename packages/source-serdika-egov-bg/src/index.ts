@@ -16,7 +16,7 @@ export function parsePublicationDate(text: string): string {
   const labelIndex = text.toLowerCase().indexOf(label);
   const publication = labelIndex < 0 ? "" : text.slice(labelIndex + label.length);
   const pattern = /\d{2}\.\d{2}\.\d{4}/;
-  const value = publication.match(pattern)?.[0] ?? text.match(pattern)?.[0] ?? text.trim();
+  const value = pattern.exec(publication)?.[0] ?? pattern.exec(text)?.[0] ?? text.trim();
   const parts = value.replaceAll("/", ".").split(".");
   const [day, month, year] = parts;
   if (parts.length === 3 && day && month && year) {

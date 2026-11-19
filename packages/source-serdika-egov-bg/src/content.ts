@@ -198,7 +198,9 @@ function buildAttachmentLabel(url: string, index: number): string {
 }
 
 function stripTags(html: string): string {
-  return decodeHtmlEntities(stripHtmlTags(html, " "));
+  // Keep literal comparisons such as "2 < 3" and drop an unfinished final tag.
+  const text = html.replace(/<[A-Za-z!/][^>]*>?/g, (tag) => tag.endsWith(">") ? " " : "");
+  return decodeHtmlEntities(text);
 }
 
 function cleanText(text: string): string {
@@ -206,45 +208,5 @@ function cleanText(text: string): string {
 }
 
 function escapeRegExp(text: string): string {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-
-function stripHtmlTags(text: string, replacement: string = ""): string {
-  let result = "";
-  let insideTag = false;
-
-  function isTagStartAt(index: number): boolean {
-    const next = text[index + 1];
-    return Boolean(next?.match(/[A-Za-z!/]/));
-  }
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    if (char === "<") {
-      if (insideTag || isTagStartAt(i)) {
-        insideTag = true;
-        continue;
-      }
-
-      result += char;
-      continue;
-    }
-
-    if (char === ">") {
-      if (insideTag) {
-        insideTag = false;
-        result += replacement;
-      } else {
-        result += char;
-      }
-      continue;
-    }
-
-    if (!insideTag) {
-      result += char;
-    }
-  }
-
-  return result;
+  return text.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
