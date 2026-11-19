@@ -32,6 +32,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | [`@oboapp/source-mladost-bg`](packages/source-mladost-bg) | Repair announcements and webpage content for Sofia district Mladost |
 | [`@oboapp/source-vrabnitsa-org`](packages/source-vrabnitsa-org) | News and events with webpage content for Sofia district Vrabnitsa |
 | [`@oboapp/source-sdvr-mvr-bg`](packages/source-sdvr-mvr-bg) | Browser news listing and article content for the Sofia Directorate of Interior |
+| [`@oboapp/source-krasna-polyana-org`](packages/source-krasna-polyana-org) | Public district notices from Krasna Polyana's WordPress API |
 
 Use Node.js 20.3 or later and the pinned pnpm version. Run `pnpm install --frozen-lockfile` and `pnpm check`. CI checks Node.js 20, 22, and 24 and packs each package.
 
