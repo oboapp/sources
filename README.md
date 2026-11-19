@@ -23,6 +23,7 @@ Agents start with [AGENTS.md](AGENTS.md). For version changes, package publicati
 | [`@oboapp/source-triaditsa-org`](packages/source-triaditsa-org) | Full-content RSS source for Sofia district Triaditsa |
 | [`@oboapp/source-rayon-oborishte-bg`](packages/source-rayon-oborishte-bg) | RSS and webpage source for Sofia district Oborishte |
 | [`@oboapp/source-so-slatina-org`](packages/source-so-slatina-org) | RSS and webpage source for Sofia district Slatina |
+| [`@oboapp/source-sofia-capital-of-sport`](packages/source-sofia-capital-of-sport) | News feed and WordPress article content from Sofia Capital of Sport |
 | [`@oboapp/source-toplo-bg`](packages/source-toplo-bg) | Listing-only heating incidents with synthetic identifiers from Toplofikatsia Sofia |
 | [`@oboapp/source-sofia-bg`](packages/source-sofia-bg) | Municipal repair notices from the Sofia website |
 | [`@oboapp/source-sofiyska-voda`](packages/source-sofiyska-voda) | Paginated ArcGIS water outages with provider geometry from Sofiyska Voda |
