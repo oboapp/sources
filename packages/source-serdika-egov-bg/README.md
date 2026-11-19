@@ -1,10 +1,27 @@
 # @oboapp/source-serdika-egov-bg
 
-Reads messages, news and events from Sofia district Serdika through the public WebSphere Portal ATOM search endpoint. The catalog source ID is `serdika-egov-bg`, with locality `bg.sofia`.
+Reads messages, news and events from Sofia district Serdika through the public WebSphere Portal ATOM search endpoint. The catalog source ID is `serdika-egov-bg`, with locality `bg.sofia`. [Provider notices](https://serdika.egov.bg/wps/portal/municipality-serdika/actual/messages)
 
 Install with `pnpm add --save-exact @oboapp/source-serdika-egov-bg`. Pass the named `createSource` export and browser-safe `metadata` from `@oboapp/source-serdika-egov-bg/metadata` to Obo's scheduled runner.
 
-Each discovery page reads one section, in the order messages, news, events. Pass each returned `nextCursor` to the next `discoverItems` call. The portal returns the newest 20 records per section. The source keeps absolute links as supplied, resolves portal-relative links using the site's context path and constructs the historical encoded WCM URL when the feed omits a link.
+To read a scan in an ES module, follow the cursor through all three sections, including any empty section. Each item carries the original identifier to pass to `fetchItem`.
+
+```js
+import { createSource } from "@oboapp/source-serdika-egov-bg";
+
+const source = createSource({ locality: "bg.sofia" });
+let cursor;
+do {
+  const page = await source.discoverItems(cursor);
+  for (const item of page.items) {
+    const notice = await source.fetchItem(item);
+    console.log(item.identifier, notice.datePublished, notice.title, notice.message);
+  }
+  cursor = page.nextCursor;
+} while (cursor !== undefined);
+```
+
+The portal returns the newest 20 records per section, in the order messages, news, events. The source keeps absolute links as supplied, resolves portal-relative links using the site's context path and constructs the historical encoded WCM URL when the feed omits a link.
 
 Article HTML supplies the title, Markdown body and publication date. Notices containing only attachments keep the file links. For events, the labeled publication date takes priority over the event date. The first numeric date or the scan time supplies the existing fallback.
 
