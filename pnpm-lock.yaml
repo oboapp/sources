@@ -247,6 +247,28 @@ importers:
         specifier: 20.0.11
         version: 20.0.11
 
+  packages/source-sofia-bg:
+    dependencies:
+      '@oboapp/source-sdk':
+        specifier: 0.2.0
+        version: 0.2.0
+      '@oboapp/source-web-utils':
+        specifier: 0.4.0
+        version: 0.4.0
+      playwright:
+        specifier: 1.61.1
+        version: 1.61.1
+      turndown:
+        specifier: 7.2.2
+        version: 7.2.2
+    devDependencies:
+      '@types/turndown':
+        specifier: 5.0.6
+        version: 5.0.6
+      happy-dom:
+        specifier: 20.0.11
+        version: 20.0.11
+
   packages/source-sofiyska-voda:
     dependencies:
       '@oboapp/source-sdk':
