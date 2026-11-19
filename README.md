@@ -6,6 +6,8 @@ The source migration is tracked in [oboapp/oboapp#586](https://github.com/oboapp
 
 ## Contributing and publishing
 
+Use the [source package README template and review checklist](docs/source-package-readme.md) when adding a provider or documenting a change in coverage.
+
 Agents start with [AGENTS.md](AGENTS.md). For version changes, package publication, release tags, GitHub releases, or publishing problems, follow [RELEASING.md](RELEASING.md), the canonical release procedure for every package.
 
 ## Packages
