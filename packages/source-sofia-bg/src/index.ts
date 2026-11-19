@@ -12,6 +12,12 @@ const NEWS_FEED = "https://www.sofia.bg/news/-/asset_publisher/1ZlMReQfODHE/rss"
 const NEWS_LISTING = "https://www.sofia.bg/bg/news";
 const REPORT_ERRORS = "report-discovery-errors";
 
+function delay(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 2_000);
+  });
+}
+
 export function createSource(context: SourceContext, options: SofiaOptions = {}): DataSource {
   const articles = new Map<string, Article>();
   const errors: unknown[] = [];
@@ -25,12 +31,6 @@ export function createSource(context: SourceContext, options: SofiaOptions = {})
       args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
     });
     return browser;
-  }
-
-  function delay(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, 2_000);
-    });
   }
 
   async function news(): Promise<Article[]> {
